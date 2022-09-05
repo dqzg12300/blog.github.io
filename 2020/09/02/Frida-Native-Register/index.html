@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>使用frida来hook artmethod的RegisterNative | king的博客</title><meta name="keywords" content="基础,frida"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="继续学习记录 之前找到了最终有调用到ArtMethod的RegisterNative来进行绑定。现在使用frida来hook打印一下注册的函数名和地址。先用ida找到我们之前找到的ArtMethod下的RegisterNative 找到了导出函数符号_ZN3art9ArtMethod14RegisterNativeEPKvb 然后这里只有ArtMethod的指针，要获取完整的函数名。要使用ArtM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用frida来hook artmethod的RegisterNative">
+<meta property="og:url" content="http://missking.cc/2020/09/02/Frida-Native-Register/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="继续学习记录 之前找到了最终有调用到ArtMethod的RegisterNative来进行绑定。现在使用frida来hook打印一下注册的函数名和地址。先用ida找到我们之前找到的ArtMethod下的RegisterNative 找到了导出函数符号_ZN3art9ArtMethod14RegisterNativeEPKvb 然后这里只有ArtMethod的指针，要获取完整的函数名。要使用ArtM">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-09-02T22:07:54.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:30.566Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="基础,frida">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2020/09/02/Frida-Native-Register/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用frida来hook artmethod的RegisterNative',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-09-05 12:58:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用frida来hook artmethod的RegisterNative</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-02T22:07:54.000Z" title="发表于 2020-09-02 22:07:54">2020-09-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:30.566Z" title="更新于 2022-09-05 12:58:30">2022-09-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/android/">android</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用frida来hook artmethod的RegisterNative"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>继续学习记录</p>
+<p>之前找到了最终有调用到ArtMethod的RegisterNative来进行绑定。现在使用frida来hook打印一下注册的函数名和地址。先用ida找到我们之前找到的ArtMethod下的RegisterNative</p>
+<p>找到了导出函数符号<code>_ZN3art9ArtMethod14RegisterNativeEPKvb</code></p>
+<p>然后这里只有ArtMethod的指针，要获取完整的函数名。要使用ArtMethod的函数PrettyMethod。</p>
+<p>导出函数符号为 <code>_ZN3art9ArtMethod12PrettyMethodEb</code></p>
+<p>然后frida的代码就是先hook到RegisterNative，然后调用PrettyMethod来获取函数名</p>
+<a id="more"></a>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_native_register</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="built_in">module</span>= Process.getModuleByName(<span class="string">&quot;libart.so&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> ArtMethodRegisterNative=<span class="built_in">module</span>.getExportByName(<span class="string">&quot;_ZN3art9ArtMethod14RegisterNativeEPKvb&quot;</span>);</span><br><span class="line">    Interceptor.attach(ArtMethodRegisterNative,&#123;</span><br><span class="line">        onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">            <span class="keyword">var</span> curArtMethod=ptr(args[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">var</span> native_method=args[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">var</span> method_idx=ptr(curArtMethod).add(<span class="number">12</span>).readU32();</span><br><span class="line">            <span class="keyword">var</span> prettyMethodPtr=Module.getExportByName(<span class="string">&quot;libart.so&quot;</span>,<span class="string">&quot;_ZN3art9ArtMethod12PrettyMethodEb&quot;</span>);</span><br><span class="line">            <span class="keyword">var</span> result=Memory.alloc(<span class="number">0x100</span>);</span><br><span class="line">            <span class="keyword">var</span> prettyMethod=<span class="keyword">new</span> NativeFunction(prettyMethodPtr,<span class="string">&#x27;pointer&#x27;</span>,[<span class="string">&#x27;pointer&#x27;</span>,<span class="string">&#x27;pointer&#x27;</span>,<span class="string">&#x27;bool&#x27;</span>]);</span><br><span class="line">            prettyMethod(ptr(result),ptr(curArtMethod),<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">var</span> methodName=result.add(<span class="number">0x8</span>).readPointer().readCString()</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;,method_idx:&quot;</span>,method_idx,<span class="string">&quot;native_ptr:&quot;</span>,native_method,<span class="string">&quot;,methodName:&quot;</span>,methodName);</span><br><span class="line">        &#125;,</span><br><span class="line">        onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    hook_native_register();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setImmediate(main);</span><br></pre></td></tr></table></figure>
+
+<p>关键要注意的一个地方是prettyMethod的调用，它是一个特殊的调用，类和结构的返回值都会进行特殊的方式返回。这里返回的是一个string，所以使用了特殊方式进行返回结果。默认新加一个参数在最前面，然后将返回值填充到第一个参数里面。而不是直接返回。下面放一下frida文档的原文</p>
+<p><code>As for structs or classes passed by value, instead of a string provide an array containing the struct’s field types following each other. You may nest these as deep as desired for representing structs inside structs. Note that the returned object is also a NativePointer, and can thus be passed to Interceptor#attach.This must match the struct/class exactly, so if you have a struct with three ints, you must pass [&#39;int&#39;, &#39;int&#39;, &#39;int&#39;]For a class that has virtual methods, the first parameter will be a pointer to the vtable.For C++ scenarios involving a return value that is larger than Process.pointerSize, a NativePointer to preallocated space must be passed in as the first parameter. (This scenario is common in WebKit, for example.)</code></p>
+<p>这里原本执行是</p>
+<p><code>var prettyMethod=new NativeFunction(prettyMethodPtr,&#39;pointer&#39;,[&#39;pointer&#39;,&#39;bool&#39;]);</code></p>
+<p>特殊处理后变成了</p>
+<p><code>var prettyMethod=new NativeFunction(prettyMethodPtr,&#39;pointer&#39;,[&#39;pointer&#39;,&#39;pointer&#39;,&#39;bool&#39;]);</code></p>
+<p>最后frida启动测试</p>
+<p><code>frida -U --no-pause -f com.example.classloadertest -l mydemo1.js</code></p>
+<p>下面是运行结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">method_idx: <span class="number">131</span> native_ptr: <span class="number">0xcb4ddea5</span> ,methodName: java.lang.String com.stub.StubApp.interface14(int)</span><br><span class="line">method_idx: <span class="number">141</span> native_ptr: <span class="number">0xcb516d41</span> ,methodName: void com.stub.StubApp.mark()</span><br><span class="line">method_idx: <span class="number">142</span> native_ptr: <span class="number">0xcb516a75</span> ,methodName: void com.stub.StubApp.mark(android.location.Location)</span><br><span class="line">method_idx: <span class="number">140</span> native_ptr: <span class="number">0xcb516979</span> ,methodName: android.location.Location com.stub.StubApp.mark(android.location.LocationManager, java.lang.String)</span><br><span class="line">method_idx: <span class="number">136</span> native_ptr: <span class="number">0xcb4ddf05</span> ,methodName: void com.stub.StubApp.interface5(android.app.Application)</span><br><span class="line">method_idx: <span class="number">128</span> native_ptr: <span class="number">0xcb4eb3d5</span> ,methodName: void com.stub.StubApp.interface11(int)</span><br><span class="line">method_idx: <span class="number">129</span> native_ptr: <span class="number">0xcb4de28d</span> ,methodName: java.util.Enumeration com.stub.StubApp.interface12(dalvik.system.DexFile)</span><br><span class="line">method_idx: <span class="number">138</span> native_ptr: <span class="number">0xcb4e0b19</span> ,methodName: boolean com.stub.StubApp.interface7(android.app.Application, android.content.Context)</span><br><span class="line">method_idx: <span class="number">139</span> native_ptr: <span class="number">0xcb4de721</span> ,methodName: boolean com.stub.StubApp.interface8(android.app.Application, android.content.Context)</span><br><span class="line">method_idx: <span class="number">5228</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.BH.getCloundTag(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5229</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.BH.getMsg(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5230</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.BH.install(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5233</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.BH.updateConfig(android.content.Context, java.lang.String)</span><br><span class="line">method_idx: <span class="number">5358</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.proxy.MyProxy.getEnable(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5359</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.proxy.MyProxy.getMetaRow(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5360</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.Object com.jg.bh.proxy.MyProxy.getProxyObject(java.lang.Object, java.lang.reflect.InvocationHandler)</span><br><span class="line">method_idx: <span class="number">5361</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.proxy.MyProxy.getVersion(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5362</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.proxy.MyProxy.installAll(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5363</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.Object com.jg.bh.proxy.MyProxy.newProxyInstance(java.lang.ClassLoader, java.lang.Class[], java.lang.reflect.InvocationHandler)</span><br><span class="line">method_idx: <span class="number">5364</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.proxy.MyProxy.parseConfig(java.lang.String)</span><br><span class="line">method_idx: <span class="number">5365</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.proxy.MyProxy.putBHString(android.content.Context, java.lang.String)</span><br><span class="line">method_idx: <span class="number">5366</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.proxy.MyProxy.putConfig(android.content.Context, java.lang.String)</span><br><span class="line">method_idx: <span class="number">5399</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: boolean com.jg.bh.util.MetaRow.access$<span class="number">000</span>(com.jg.bh.util.MetaRow)</span><br><span class="line">method_idx: <span class="number">5400</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: boolean com.jg.bh.util.MetaRow.access$<span class="number">002</span>(com.jg.bh.util.MetaRow, boolean)</span><br><span class="line">method_idx: <span class="number">5401</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.access$<span class="number">100</span>(com.jg.bh.util.MetaRow, org.json.JSONObject)</span><br><span class="line">method_idx: <span class="number">5402</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.util.MetaRow.getCellList()</span><br><span class="line">method_idx: <span class="number">5403</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.util.MetaRow.getCelllData(android.telephony.CellInfo)</span><br><span class="line">method_idx: <span class="number">5405</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.util.MetaRow.getWiFiInfo()</span><br><span class="line">method_idx: <span class="number">5406</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.util.MetaRow.getWifiScanList()</span><br><span class="line">method_idx: <span class="number">5417</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.syncJsonData(org.json.JSONObject)</span><br><span class="line">method_idx: <span class="number">5404</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.String com.jg.bh.util.MetaRow.getNetConnType()</span><br><span class="line">method_idx: <span class="number">5407</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: boolean com.jg.bh.util.MetaRow.isGlobalVpn()</span><br><span class="line">method_idx: <span class="number">5408</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setCellInfoList(java.util.List)</span><br><span class="line">method_idx: <span class="number">5409</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setConnWifi(android.net.wifi.WifiInfo)</span><br><span class="line">method_idx: <span class="number">5410</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setData(java.lang.String)</span><br><span class="line">method_idx: <span class="number">5411</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setDhcpInfo(android.net.DhcpInfo)</span><br><span class="line">method_idx: <span class="number">5412</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setLocation(android.location.Location)</span><br><span class="line">method_idx: <span class="number">5413</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setWifiConf(java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5414</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setWifiScanner(java.util.List)</span><br><span class="line">method_idx: <span class="number">5415</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setmNISubtype(int)</span><br><span class="line">method_idx: <span class="number">5416</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.util.MetaRow.setmNIType(int)</span><br><span class="line">method_idx: <span class="number">5418</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: org.json.JSONObject com.jg.bh.util.MetaRow.toJSON()</span><br><span class="line">method_idx: <span class="number">5257</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.BaseServiceHook.onInstall()</span><br><span class="line">method_idx: <span class="number">5301</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.TelephonyHook.access$<span class="number">000</span>(com.jg.bh.hook.binder.TelephonyHook, java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5302</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.TelephonyHook.access$<span class="number">100</span>(com.jg.bh.hook.binder.TelephonyHook, java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5303</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.TelephonyHook.callGetAllCellInfo(java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5304</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.TelephonyHook.callGetCellLocation(java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5305</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.TelephonyHook.createBinderProxyHookHandler(android.os.IBinder, java.lang.Class)</span><br><span class="line">method_idx: <span class="number">5265</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.BinderProxyHookHandler.getmInterfacehandler()</span><br><span class="line">method_idx: <span class="number">5266</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: java.lang.Object com.jg.bh.hook.binder.BinderProxyHookHandler.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])</span><br><span class="line">method_idx: <span class="number">5267</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.jg.bh.hook.binder.BinderProxyHookHandler.setmInterfacehandler(com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler)</span><br><span class="line">method_idx: <span class="number">5273</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.IConnectivityManagerHook.createBinderProxyHookHandler(android.os.IBinder, java.lang.Class)</span><br><span class="line">method_idx: <span class="number">5280</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.ILocationManagerHook.createBinderProxyHookHandler(android.os.IBinder, java.lang.Class)</span><br><span class="line">method_idx: <span class="number">5287</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.IWifiManagerHook.createBinderProxyHookHandler(android.os.IBinder, java.lang.Class)</span><br><span class="line">method_idx: <span class="number">5294</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: com.jg.bh.hook.binder.BinderProxyHookHandler$IInterfaceHookHandler com.jg.bh.hook.binder.IWifiScannerHook.createBinderProxyHookHandler(android.os.IBinder, java.lang.Class)</span><br><span class="line">method_idx: <span class="number">11474</span> native_ptr: <span class="number">0xcb4defb9</span> ,methodName: java.lang.String[] dalvik.system.DexFile.getClassNameList(java.lang.Object)</span><br><span class="line">method_idx: <span class="number">5172</span> native_ptr: <span class="number">0xcb4dd59d</span> ,methodName: java.lang.String com.common.busi.CustomView.getAppkey()</span><br><span class="line">method_idx: <span class="number">5173</span> native_ptr: <span class="number">0xcb4dd78d</span> ,methodName: long com.common.busi.CustomView.getPT()</span><br><span class="line">method_idx: <span class="number">5451</span> native_ptr: <span class="number">0xcb4dd8a9</span> ,methodName: int com.jg.ce.Interface2.interface1(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5452</span> native_ptr: <span class="number">0xcb4dd8b7</span> ,methodName: int com.jg.ce.Interface2.interface2(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5453</span> native_ptr: <span class="number">0xcb4dd8bb</span> ,methodName: int com.jg.ce.Interface2.interface3(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5454</span> native_ptr: <span class="number">0xcb4dd8c1</span> ,methodName: int com.jg.ce.Interface2.interface4(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5455</span> native_ptr: <span class="number">0xcb4dd8c5</span> ,methodName: int com.jg.ce.Interface2.interface5(android.content.Context)</span><br><span class="line">method_idx: <span class="number">5643</span> native_ptr: <span class="number">0xcb4db755</span> ,methodName: void com.stub.stub07.Stub01.mark1(java.lang.String)</span><br><span class="line">method_idx: <span class="number">5231</span> native_ptr: <span class="number">0xcb4db8d9</span> ,methodName: void com.jg.bh.BH.mark2(java.lang.String, double, double)</span><br><span class="line">method_idx: <span class="number">5232</span> native_ptr: <span class="number">0xcb52d269</span> ,methodName: java.lang.String com.jg.bh.BH.mark3()</span><br><span class="line">method_idx: <span class="number">5196</span> native_ptr: <span class="number">0xcb4ec3f1</span> ,methodName: void com.example.classloadertest.MainActivity.onCreate(android.os.Bundle)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2020/09/02/Frida-Native-Register/">http://missking.cc/2020/09/02/Frida-Native-Register/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80-frida/">基础,frida</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/09/03/Hook-Interpreter/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">使用frida hook解释器Interpreter</div></div></a></div><div class="next-post pull-right"><a href="/2020/08/30/JNI-DexClassLoader/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">jni函数动态注册分析</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/09/03/Hook-Interpreter/" title="使用frida hook解释器Interpreter"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-03</div><div class="title">使用frida hook解释器Interpreter</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2020/09/02/Frida-Native-Register/'
+    this.page.identifier = '2020/09/02/Frida-Native-Register/'
+    this.page.title = '使用frida来hook artmethod的RegisterNative'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

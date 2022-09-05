@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>算法还原实战练习3 | king的博客</title><meta name="keywords" content="实战"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分析样例下载：链接: https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1qxkYqMovR8Fe6sO-Zr-8ow  密码: dh7g 第一题algorithmbase_32 直接ida打开找到encodeFromJni_32函数。然后F5后。发现是ollvm混淆的。然后大概的分析一下。我的分析思路是。首先是大概的翻一下参数较多的那些函数，看看是否有什么比较眼熟的函数。果然很快锁定了一个函数su">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法还原实战练习3">
+<meta property="og:url" content="http://missking.cc/2021/01/09/zuoye3/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="分析样例下载：链接: https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1qxkYqMovR8Fe6sO-Zr-8ow  密码: dh7g 第一题algorithmbase_32 直接ida打开找到encodeFromJni_32函数。然后F5后。发现是ollvm混淆的。然后大概的分析一下。我的分析思路是。首先是大概的翻一下参数较多的那些函数，看看是否有什么比较眼熟的函数。果然很快锁定了一个函数su">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2021-01-09T21:34:35.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:31.358Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="实战">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2021/01/09/zuoye3/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '算法还原实战练习3',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-09-05 12:58:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">算法还原实战练习3</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-01-09T21:34:35.000Z" title="发表于 2021-01-09 21:34:35">2021-01-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:31.358Z" title="更新于 2022-09-05 12:58:31">2022-09-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="算法还原实战练习3"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>分析样例下载：链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1qxkYqMovR8Fe6sO-Zr-8ow">https://pan.baidu.com/s/1qxkYqMovR8Fe6sO-Zr-8ow</a>  密码: dh7g</p>
+<p>第一题algorithmbase_32</p>
+<p>直接ida打开找到encodeFromJni_32函数。然后F5后。发现是ollvm混淆的。然后大概的分析一下。我的分析思路是。首先是大概的翻一下参数较多的那些函数，看看是否有什么比较眼熟的函数。果然很快锁定了一个函数sub_1D920。下面贴上交为眼熟的部分</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109220431469.png" alt="image-20210109220431469"></p>
+<p>我圈出来的这几个特征和我们之前分析过的md5的特征高度的相似。v10的那些明显就是MD5的那个key。而下面是拼接的三段固定数据再加上我们的输入值。所以我们先看看那三段数据分别是什么</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109220926171.png" alt="image-20210109220926171"></p>
+<p>点开后发现字符串被加密了。所以我们用之前研究的解ollvm字符串混淆的工具unidbg或者是AndroidNativeEmu来生成一个解密的so跑一下。下面贴上解完之后的结果</p>
+<a id="more"></a>
+
+<p><img src="/2021/01/09/zuoye3/image-20210109221223706.png" alt="image-20210109221223706"></p>
+<p>然后点进去看看字符串。</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109221252596.png" alt="image-20210109221252596"></p>
+<p>知道是什么值拼接的之后。然后就简单了。先看看输出和输出的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rRZrALoUFxTqxDCJHjT -&gt; ea8caf7e47b8404d81de797995d6c3cc</span><br></pre></td></tr></table></figure>
+
+<p>然后我们拼接kanxue+imyang+ollvm_md5+输入数据来MD5看看是否一致</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109222044810.png" alt="image-20210109222044810"></p>
+<p>结果和上面的一致。第一题搞定</p>
+<p>=======================================================================================================</p>
+<p>第二题algorithmbase_32_2</p>
+<p>直接ida开始分析。找到encodeFromJni_32函数。由于上一个例子翻到了关键函数。直接找类似的函数。定位到了sub_1D48C。</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109222513629.png" alt="image-20210109222513629"></p>
+<p>看着和之前的差不多的。然后看看前面固定拼接了些什么</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109222606117.png" alt="image-20210109222606117"></p>
+<p>发现也是字符串混淆加密的。老办法。上unidbg或者是AndroidNativeEmu来生成一个解密的so。</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109222824334.png" alt="image-20210109222824334"></p>
+<p>解密后看到依然还是这几个值。我们跑的测试一下看是否计算的值一致了。先获取一个手机上的输入和输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cPKpWAMuRxJVSJORW -&gt; ec184c0980693ef670486feb407b6031</span><br></pre></td></tr></table></figure>
+
+<p>看下面的图。发现结果不是一致的</p>
+<p><img src="/2021/01/09/zuoye3/image-20210109224758535.png" alt="image-20210109224758535"></p>
+<p>所以我们还得检查。key是否发生了变化。静态分析上面看。是没有什么变化。我们需要动态调试的情况下看看拼接完数据后。最后调用sub_1CDFC函数的时候v11的值是否已经变了。为了方便调试。我先用unidbg成功把这个函数跑通</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">lianxi32</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        lianxi32 lianxi = <span class="keyword">new</span> lianxi32();</span><br><span class="line">        lianxi.Call_EncodeFromJni_32();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AndroidEmulator emulator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> VM vm;</span><br><span class="line">    <span class="keyword">private</span> DvmClass Clazz;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">lianxi32</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        emulator = <span class="keyword">new</span> AndroidARM64Emulator();</span><br><span class="line">        Memory memory = emulator.getMemory();</span><br><span class="line">        LibraryResolver resolver = <span class="keyword">new</span> AndroidResolver(<span class="number">23</span>);</span><br><span class="line">        memory.setLibraryResolver(resolver);</span><br><span class="line">        vm = emulator.createDalvikVM(<span class="keyword">null</span>);</span><br><span class="line">        vm.setVerbose(<span class="keyword">false</span>);</span><br><span class="line">        DalvikModule dm = vm.loadLibrary(<span class="keyword">new</span> File(<span class="string">&quot;unidbg-android/src/test/resources/example_binaries/lianxi32_2/libnative-lib.so&quot;</span>), <span class="keyword">false</span>);</span><br><span class="line">        dm.callJNI_OnLoad(emulator);</span><br><span class="line">        Clazz = vm.resolveClass(<span class="string">&quot;com/kanxue/algorithmbase/MainActivity&quot;</span>);</span><br><span class="line">        Debugger dbg = emulator.attach();</span><br><span class="line">        dbg.addBreakPoint(dm.getModule(), <span class="number">0x1D63C</span>);</span><br><span class="line">        dbg.debug();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Call_EncodeFromJni_32</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String res=Clazz.callStaticJniMethodObject(emulator,<span class="string">&quot;encodeFromJni_132(Ljava/lang/String;)Ljava/lang/String;&quot;</span>,<span class="string">&quot;cPKpWAMuRxJVSJORW&quot;</span>).toString();</span><br><span class="line">        System.out.print(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>断点的位置是函数调用的点。所以要查v11参数。直接打印X1的内存数据就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0000: 01 23 45 67 00 00 00 00 89 AB CD EF 00 00 00 00    .#Eg............</span><br><span class="line">0010: FE DC BA 98 00 00 00 00 76 54 32 10 00 00 00 00    ........vT2.....</span><br></pre></td></tr></table></figure>
+
+<p>接着我再把上一个案例也跑一下。对比上一个案例的标准</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0000: 01 23 45 67 00 00 00 00 89 AB CD EF 00 00 00 00    .#Eg............</span><br><span class="line">0010: FE DC BA 98 00 00 00 00 76 54 32 10 00 00 00 00    ........vT2.....</span><br></pre></td></tr></table></figure>
+
+<p>结果发现key没有啥区别。猜测可能是MD5的那个table表发生了变化又或者这不是一个MD5。先trace一份分析一下.下面的KingTrace使用了我自己封装的。贴一下相关的代码连接<a target="_blank" rel="noopener" href="https://github.com/dqzg12300/unidbg.git">https://github.com/dqzg12300/unidbg.git</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">lianxi32</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        lianxi32 lianxi = <span class="keyword">new</span> lianxi32();</span><br><span class="line">        lianxi.Call_EncodeFromJni_32();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AndroidEmulator emulator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> VM vm;</span><br><span class="line">    <span class="keyword">private</span> DvmClass Clazz;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">lianxi32</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        emulator = <span class="keyword">new</span> AndroidARM64Emulator();</span><br><span class="line">        Memory memory = emulator.getMemory();</span><br><span class="line">        LibraryResolver resolver = <span class="keyword">new</span> AndroidResolver(<span class="number">23</span>);</span><br><span class="line">        memory.setLibraryResolver(resolver);</span><br><span class="line">        vm = emulator.createDalvikVM(<span class="keyword">null</span>);</span><br><span class="line">        vm.setVerbose(<span class="keyword">false</span>);</span><br><span class="line">        DalvikModule dm = vm.loadLibrary(<span class="keyword">new</span> File(<span class="string">&quot;unidbg-android/src/test/resources/example_binaries/lianxi32_2/libnative-lib.so&quot;</span>), <span class="keyword">false</span>);</span><br><span class="line">        dm.callJNI_OnLoad(emulator);</span><br><span class="line">        Clazz = vm.resolveClass(<span class="string">&quot;com/kanxue/algorithmbase/MainActivity&quot;</span>);</span><br><span class="line">        KingTrace trace=<span class="keyword">new</span> KingTrace(emulator);</span><br><span class="line">        <span class="keyword">long</span> start=<span class="number">0x400196c8</span>;      <span class="comment">//0x196c8  0x3bb4</span></span><br><span class="line">        <span class="keyword">long</span> end=<span class="number">0x400196c8</span>+<span class="number">0x3bb4</span>;</span><br><span class="line">        trace.initialize(start,end,<span class="keyword">null</span>);</span><br><span class="line">        emulator.getBackend().hook_add_new(trace,start,end,emulator);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Call_EncodeFromJni_32</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String res=Clazz.callStaticJniMethodObject(emulator,<span class="string">&quot;encodeFromJni_132(Ljava/lang/String;)Ljava/lang/String;&quot;</span>,<span class="string">&quot;cPKpWAMuRxJVSJORW&quot;</span>).toString();</span><br><span class="line">        System.out.print(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们看一下我们之前github上拿的MD5项目的table表是有哪些数据。然后只保留table的值。去掉其他代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0xd76aa478</span></span><br><span class="line"><span class="number">0xe8c7b756</span></span><br><span class="line"><span class="number">0x242070db</span></span><br><span class="line"><span class="number">0xc1bdceee</span></span><br><span class="line"><span class="number">0xf57c0faf</span></span><br><span class="line"><span class="number">0x4787c62a</span></span><br><span class="line"><span class="number">0xa8304613</span></span><br><span class="line"><span class="number">0xfd469501</span></span><br><span class="line"><span class="number">0x698098d8</span></span><br><span class="line"><span class="number">0x8b44f7af</span></span><br><span class="line"><span class="number">0xffff5bb1</span></span><br><span class="line"><span class="number">0x895cd7be</span></span><br><span class="line"><span class="number">0x6b901122</span></span><br><span class="line"><span class="number">0xfd987193</span></span><br><span class="line"><span class="number">0xa679438e</span></span><br><span class="line"><span class="number">0x49b40821</span></span><br><span class="line"><span class="number">0xf61e2562</span></span><br><span class="line"><span class="number">0xc040b340</span></span><br><span class="line"><span class="number">0x265e5a51</span></span><br><span class="line"><span class="number">0xe9b6c7aa</span></span><br><span class="line"><span class="number">0xd62f105d</span></span><br><span class="line"><span class="number">0x2441453</span></span><br><span class="line"><span class="number">0xd8a1e681</span></span><br><span class="line"><span class="number">0xe7d3fbc8</span></span><br><span class="line"><span class="number">0x21e1cde6</span></span><br><span class="line"><span class="number">0xc33707d6</span></span><br><span class="line"><span class="number">0xf4d50d87</span></span><br><span class="line"><span class="number">0x455a14ed</span></span><br><span class="line"><span class="number">0xa9e3e905</span></span><br><span class="line"><span class="number">0xfcefa3f8</span></span><br><span class="line"><span class="number">0x676f02d9</span></span><br><span class="line"><span class="number">0x8d2a4c8a</span></span><br><span class="line"><span class="number">0xfffa3942</span></span><br><span class="line"><span class="number">0x8771f681</span></span><br><span class="line"><span class="number">0x6d9d6122</span></span><br><span class="line"><span class="number">0xfde5380c</span></span><br><span class="line"><span class="number">0xa4beea44</span></span><br><span class="line"><span class="number">0x4bdecfa9</span></span><br><span class="line"><span class="number">0xf6bb4b60</span></span><br><span class="line"><span class="number">0xbebfbc70</span></span><br><span class="line"><span class="number">0x289b7ec6</span></span><br><span class="line"><span class="number">0xeaa127fa</span></span><br><span class="line"><span class="number">0xd4ef3085</span></span><br><span class="line"><span class="number">0x4881d05</span></span><br><span class="line"><span class="number">0xd9d4d039</span></span><br><span class="line"><span class="number">0xe6db99e5</span></span><br><span class="line"><span class="number">0x1fa27cf8</span></span><br><span class="line"><span class="number">0xc4ac5665</span></span><br><span class="line"><span class="number">0xf4292244</span></span><br><span class="line"><span class="number">0x432aff97</span></span><br><span class="line"><span class="number">0xab9423a7</span></span><br><span class="line"><span class="number">0xfc93a039</span></span><br><span class="line"><span class="number">0x655b59c3</span></span><br><span class="line"><span class="number">0x8f0ccc92</span></span><br><span class="line"><span class="number">0xffeff47d</span></span><br><span class="line"><span class="number">0x85845dd1</span></span><br><span class="line"><span class="number">0x6fa87e4f</span></span><br><span class="line"><span class="number">0xfe2ce6e0</span></span><br><span class="line"><span class="number">0xa3014314</span></span><br><span class="line"><span class="number">0x4e0811a1</span></span><br><span class="line"><span class="number">0xf7537e82</span></span><br><span class="line"><span class="number">0xbd3af235</span></span><br><span class="line"><span class="number">0x2ad7d2bb</span></span><br><span class="line"><span class="number">0xeb86d391</span></span><br></pre></td></tr></table></figure>
+
+<p>在trace记录里面查询一下。能够找的值的索引说明没有被修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;[libnative-lib.so] [0x19fa8] [ 40 ed ba 72 ] 0x40019fa8: movk w0, #0xd76a, lsl #16-----w0&#x3D;0xa478        &#x2F;&#x2F;w0&#x3D;0xd76aa478&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x19fc4] [ e0 18 bd 72 ] 0x40019fc4: movk w0, #0xe8c7, lsl #16-----w0&#x3D;0xb756        &#x2F;&#x2F;w0&#x3D;0xe8c7b756&quot;</span><br></pre></td></tr></table></figure>
+
+<p>写个简单的脚本检查一下trace中缺少了哪一个table的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">&quot;./traces.log&quot;</span>, <span class="string">&quot;r+&quot;</span>) <span class="keyword">as</span> tracefile:</span><br><span class="line">        traces=tracefile.read()</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">&quot;./md5table.txt&quot;</span>,<span class="string">&quot;r+&quot;</span>) <span class="keyword">as</span> md5file:</span><br><span class="line">        table= md5file.read()</span><br><span class="line">        tableSp=table.split(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(tableSp)):</span><br><span class="line">            <span class="keyword">if</span> tableSp[i] <span class="keyword">in</span> traces:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            print(tableSp[i])</span><br></pre></td></tr></table></figure>
+
+<p>最后打印出下面的两个值。这两个被改动了。然后看看这两个的索引位置分别在9和26的位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x698098d8</span><br><span class="line">0xc33707d6</span><br></pre></td></tr></table></figure>
+
+<p>接下来把traces拿出来搜索一下movk w。过滤后然后在里面搜索到table中的索引8的值0xfd469501在哪里。然后把往后的30条记录全部拿出来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&quot;[libnative-lib.so] [0x1a4ac] [ ca a8 bf 72 ] 0x4001a4ac: movk w10, #0xfd46, lsl #16-----w10&#x3D;0x9501        &#x2F;&#x2F;w10&#x3D;0xfd469501&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a584] [ 0a 33 ad 72 ] 0x4001a584: movk w10, #0x6998, lsl #16-----w10&#x3D;0x80d8        &#x2F;&#x2F;w10&#x3D;0x699880d8&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a670] [ 8e 68 b1 72 ] 0x4001a670: movk w14, #0x8b44, lsl #16-----w14&#x3D;0xf7af        &#x2F;&#x2F;w14&#x3D;0x8b44f7af&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a6f8] [ fe 87 b3 72 ] 0x4001a6f8: movk w30, #0x9c3f, lsl #16-----w30&#x3D;0x4e9d        &#x2F;&#x2F;w30&#x3D;0x9c3f4e9d&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a6fc] [ a6 23 b1 72 ] 0x4001a6fc: movk w6, #0x891d, lsl #16-----w6&#x3D;0xdfce        &#x2F;&#x2F;w6&#x3D;0x891ddfce&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a700] [ e3 54 bb 72 ] 0x4001a700: movk w3, #0xdaa7, lsl #16-----w3&#x3D;0xe993        &#x2F;&#x2F;w3&#x3D;0xdaa7e993&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a704] [ 59 8c b1 72 ] 0x4001a704: movk w25, #0x8c62, lsl #16-----w25&#x3D;0x3405        &#x2F;&#x2F;w25&#x3D;0x8c623405&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a708] [ 82 8e be 72 ] 0x4001a708: movk w2, #0xf474, lsl #16-----w2&#x3D;0x1363        &#x2F;&#x2F;w2&#x3D;0xf4741363&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a70c] [ 89 8e be 72 ] 0x4001a70c: movk w9, #0xf474, lsl #16-----w9&#x3D;0x1363        &#x2F;&#x2F;w9&#x3D;0xf4741363&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1aa84] [ 0a b3 bf 72 ] 0x4001aa84: movk w10, #0xfd98, lsl #16-----w10&#x3D;0x7193        &#x2F;&#x2F;w10&#x3D;0xfd987193&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1aa9c] [ 8a 2b b1 72 ] 0x4001aa9c: movk w10, #0x895c, lsl #16-----w10&#x3D;0xd7be        &#x2F;&#x2F;w10&#x3D;0x895cd7be&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1aae4] [ 0a 72 ad 72 ] 0x4001aae4: movk w10, #0x6b90, lsl #16-----w10&#x3D;0x1122        &#x2F;&#x2F;w10&#x3D;0x6b901122&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ab9c] [ 2a cf b4 72 ] 0x4001ab9c: movk w10, #0xa679, lsl #16-----w10&#x3D;0x438e        &#x2F;&#x2F;w10&#x3D;0xa679438e&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ac10] [ 89 36 a9 72 ] 0x4001ac10: movk w9, #0x49b4, lsl #16-----w9&#x3D;0x821        &#x2F;&#x2F;w9&#x3D;0x49b40821&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ad04] [ c3 c3 be 72 ] 0x4001ad04: movk w3, #0xf61e, lsl #16-----w3&#x3D;0x2562        &#x2F;&#x2F;w3&#x3D;0xf61e2562&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ae44] [ c0 cb a4 72 ] 0x4001ae44: movk w0, #0x265e, lsl #16-----w0&#x3D;0x5a51        &#x2F;&#x2F;w0&#x3D;0x265e5a51&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ae58] [ 06 08 b8 72 ] 0x4001ae58: movk w6, #0xc040, lsl #16-----w6&#x3D;0xb340        &#x2F;&#x2F;w6&#x3D;0xc040b340&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b02c] [ e0 c5 ba 72 ] 0x4001b02c: movk w0, #0xd62f, lsl #16-----w0&#x3D;0x105d        &#x2F;&#x2F;w0&#x3D;0xd62f105d&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b0e8] [ c0 36 bd 72 ] 0x4001b0e8: movk w0, #0xe9b6, lsl #16-----w0&#x3D;0xc7aa        &#x2F;&#x2F;w0&#x3D;0xe9b6c7aa&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b1b8] [ 2f 14 bb 72 ] 0x4001b1b8: movk w15, #0xd8a1, lsl #16-----w15&#x3D;0xe681        &#x2F;&#x2F;w15&#x3D;0xd8a1e681&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b264] [ 8f 48 a0 72 ] 0x4001b264: movk w15, #0x244, lsl #16-----w15&#x3D;0x1453        &#x2F;&#x2F;w15&#x3D;0x2441453&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b400] [ 6a fa bc 72 ] 0x4001b400: movk w10, #0xe7d3, lsl #16-----w10&#x3D;0xfbc8        &#x2F;&#x2F;w10&#x3D;0xe7d3fbc8&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b440] [ ef 60 b8 72 ] 0x4001b440: movk w15, #0xc307, lsl #16-----w15&#x3D;0x37d6        &#x2F;&#x2F;w15&#x3D;0xc30737d6&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b454] [ 2f 3c a4 72 ] 0x4001b454: movk w15, #0x21e1, lsl #16-----w15&#x3D;0xcde6        &#x2F;&#x2F;w15&#x3D;0x21e1cde6&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b544] [ a8 9a be 72 ] 0x4001b544: movk w8, #0xf4d5, lsl #16-----w8&#x3D;0xd87        &#x2F;&#x2F;w8&#x3D;0xf4d50d87&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b6f8] [ 4a ab a8 72 ] 0x4001b6f8: movk w10, #0x455a, lsl #16-----w10&#x3D;0x14ed        &#x2F;&#x2F;w10&#x3D;0x455a14ed&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b828] [ 6a 3c b5 72 ] 0x4001b828: movk w10, #0xa9e3, lsl #16-----w10&#x3D;0xe905        &#x2F;&#x2F;w10&#x3D;0xa9e3e905&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b8f4] [ ea 9d bf 72 ] 0x4001b8f4: movk w10, #0xfcef, lsl #16-----w10&#x3D;0xa3f8        &#x2F;&#x2F;w10&#x3D;0xfcefa3f8&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1ba48] [ ef ed ac 72 ] 0x4001ba48: movk w15, #0x676f, lsl #16-----w15&#x3D;0x2d9        &#x2F;&#x2F;w15&#x3D;0x676f02d9&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1bb30] [ 4a a5 b1 72 ] 0x4001bb30: movk w10, #0x8d2a, lsl #16-----w10&#x3D;0x4c8a        &#x2F;&#x2F;w10&#x3D;0x8d2a4c8a&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1bc58] [ 4a ff bf 72 ] 0x4001bc58: movk w10, #0xfffa, lsl #16-----w10&#x3D;0x3942        &#x2F;&#x2F;w10&#x3D;0xfffa3942&quot;</span><br></pre></td></tr></table></figure>
+
+<p>接下来对比我们代码中的8 9 10索引的值和trace中的8 9 10的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;MD5代码中的</span><br><span class="line">0xfd469501</span><br><span class="line">0x698098d8</span><br><span class="line">0x8b44f7af</span><br><span class="line">&#x2F;&#x2F;trace记录中的</span><br><span class="line">&quot;[libnative-lib.so] [0x1a4ac] [ ca a8 bf 72 ] 0x4001a4ac: movk w10, #0xfd46, lsl #16-----w10&#x3D;0x9501        &#x2F;&#x2F;w10&#x3D;0xfd469501&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a584] [ 0a 33 ad 72 ] 0x4001a584: movk w10, #0x6998, lsl #16-----w10&#x3D;0x80d8        &#x2F;&#x2F;w10&#x3D;0x699880d8&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1a670] [ 8e 68 b1 72 ] 0x4001a670: movk w14, #0x8b44, lsl #16-----w14&#x3D;0xf7af        &#x2F;&#x2F;w14&#x3D;0x8b44f7af&quot;</span><br></pre></td></tr></table></figure>
+
+<p>对比出0x698098d8修改成了0x699880d8</p>
+<p>继续再对比24 25 26 27 28和trace中的24 25 26 27 28</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;MD5代码中的</span><br><span class="line">0xe7d3fbc8</span><br><span class="line">0x21e1cde6</span><br><span class="line">0xc33707d6</span><br><span class="line">0xf4d50d87</span><br><span class="line">0x455a14ed</span><br><span class="line">&#x2F;&#x2F;trace记录中的</span><br><span class="line">&quot;[libnative-lib.so] [0x1b400] [ 6a fa bc 72 ] 0x4001b400: movk w10, #0xe7d3, lsl #16-----w10&#x3D;0xfbc8        &#x2F;&#x2F;w10&#x3D;0xe7d3fbc8&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b440] [ ef 60 b8 72 ] 0x4001b440: movk w15, #0xc307, lsl #16-----w15&#x3D;0x37d6        &#x2F;&#x2F;w15&#x3D;0xc30737d6&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b454] [ 2f 3c a4 72 ] 0x4001b454: movk w15, #0x21e1, lsl #16-----w15&#x3D;0xcde6        &#x2F;&#x2F;w15&#x3D;0x21e1cde6&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b544] [ a8 9a be 72 ] 0x4001b544: movk w8, #0xf4d5, lsl #16-----w8&#x3D;0xd87        &#x2F;&#x2F;w8&#x3D;0xf4d50d87&quot;</span><br><span class="line">&quot;[libnative-lib.so] [0x1b6f8] [ 4a ab a8 72 ] 0x4001b6f8: movk w10, #0x455a, lsl #16-----w10&#x3D;0x14ed        &#x2F;&#x2F;w10&#x3D;0x455a14ed&quot;</span><br></pre></td></tr></table></figure>
+
+<p>对比发现26应该是修改成了0xc30737d6。或者是25变成0xc30737d6，26变成原来的25值。剩下两种可能。我们测试一下看看结果</p>
+<p>接下来修改MD5里面table的第9条为0x699880d8  第26条为0xc30737d6测试一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FF (a, b, c, d, x[ 8], s11, 0x699880d8);</span><br><span class="line">GG (d, a, b, c, x[14], s22, 0xc30737d6);</span><br></pre></td></tr></table></figure>
+
+<p>测试结果正确。第二题搞定</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">md5(&quot;kanxueimyangollvm_md5cPKpWAMuRxJVSJORW&quot;) &#x3D; ec184c0980693ef670486feb407b6031</span><br></pre></td></tr></table></figure>
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2021/01/09/zuoye3/">http://missking.cc/2021/01/09/zuoye3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AE%9E%E6%88%98/">实战</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/01/12/zuoye4/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">算法还原实战练习4</div></div></a></div><div class="next-post pull-right"><a href="/2021/01/07/zuoye2/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">算法还原实战练习2</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/01/05/zuoye1/" title="还原算法实战"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-05</div><div class="title">还原算法实战</div></div></a></div><div><a href="/2021/01/12/zuoye4/" title="算法还原实战练习4"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-12</div><div class="title">算法还原实战练习4</div></div></a></div><div><a href="/2021/01/07/zuoye2/" title="算法还原实战练习2"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-07</div><div class="title">算法还原实战练习2</div></div></a></div><div><a href="/2021/01/14/zuoye5/" title="算法还原实战练习5"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-14</div><div class="title">算法还原实战练习5</div></div></a></div><div><a href="/2021/01/19/zuoye6/" title="算法还原实战练习6"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-19</div><div class="title">算法还原实战练习6</div></div></a></div><div><a href="/2021/01/27/zuoye8/" title="算法还原实战8"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-27</div><div class="title">算法还原实战8</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2021/01/09/zuoye3/'
+    this.page.identifier = '2021/01/09/zuoye3/'
+    this.page.title = '算法还原实战练习3'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

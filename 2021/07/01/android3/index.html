@@ -1,0 +1,293 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>android基础篇三（笔记） | king的博客</title><meta name="keywords" content="android基础"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强） 常见的android文件格式(2)AndroidManifest.xml存放了apk的大量配置信息，包括软件名称、图标、主题、包名、组件配置。 所有配置都属于manifest标签，与程序配置相关的属于android标签。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android基础篇三（笔记）">
+<meta property="og:url" content="http://missking.cc/2021/07/01/android3/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强） 常见的android文件格式(2)AndroidManifest.xml存放了apk的大量配置信息，包括软件名称、图标、主题、包名、组件配置。 所有配置都属于manifest标签，与程序配置相关的属于android标签。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2021-07-01T20:05:58.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:30.770Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="android基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2021/07/01/android3/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'android基础篇三（笔记）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-05 12:58:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">android基础篇三（笔记）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-07-01T20:05:58.000Z" title="发表于 2021-07-01 20:05:58">2021-07-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:30.770Z" title="更新于 2022-09-05 12:58:30">2022-09-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="android基础篇三（笔记）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强）</p>
+<h2 id="常见的android文件格式-2"><a href="#常见的android文件格式-2" class="headerlink" title="常见的android文件格式(2)"></a>常见的android文件格式(2)</h2><h3 id="AndroidManifest-xml"><a href="#AndroidManifest-xml" class="headerlink" title="AndroidManifest.xml"></a>AndroidManifest.xml</h3><p>存放了apk的大量配置信息，包括软件名称、图标、主题、包名、组件配置。</p>
+<p>所有配置都属于manifest标签，与程序配置相关的属于android标签。</p>
+<a id="more"></a>
+
+<p><code>android:allowBackup=true</code>允许系统在进行备份操作时，备份程序的应用数据，比如在终端执行adb backup命令。对安全敏感的情况要设置为false</p>
+<p><code>android:supportsRtl=true</code>让apk支持rtl（right-to-left）视图。targetSdkVersion必须在17及以上。</p>
+<h3 id="AXML文件格式"><a href="#AXML文件格式" class="headerlink" title="AXML文件格式"></a>AXML文件格式</h3><p>AndroidManifest.xml在编译成apk前是明文的。编译成apk的时候，会把这个文件编译成二进制格式的文件。解压了再打开这个文件，就是乱码的。这个文件就是AXML格式。</p>
+<h3 id="AXML文件修改"><a href="#AXML文件修改" class="headerlink" title="AXML文件修改"></a>AXML文件修改</h3><p>有些加固厂商利用android系统解析AXML的漏洞，在编译APK时构造畸形的AXML。导致apktool之类的工具不能正常工作，就需要修改AXML。有些现成的工具修复这种情况。AmBinaryEditor、AndroidManifestFix</p>
+<h3 id="resources-arsc"><a href="#resources-arsc" class="headerlink" title="resources.arsc"></a>resources.arsc</h3><p>包含不同语言环境中res目录下所有资源的类型、名称与id所对应的信息。和AXML差不多，这是一个ARSC文件格式</p>
+<h3 id="ARSC文件的修改"><a href="#ARSC文件的修改" class="headerlink" title="ARSC文件的修改"></a>ARSC文件的修改</h3><p>和AXML一样，也是有些特殊的ARSC可以正常被系统加载，又能组织apktool之类的反编译。也有一些修改是为了汉化软件。</p>
+<h3 id="META-INF目录"><a href="#META-INF目录" class="headerlink" title="META-INF目录"></a>META-INF目录</h3><p>存储apk签名有关的信息。</p>
+<h3 id="META-INF-CERT-RSA"><a href="#META-INF-CERT-RSA" class="headerlink" title="META-INF/CERT.RSA"></a>META-INF/CERT.RSA</h3><p>存放了apk的开发者证书与签名信息。通过这个文件识别开发者身份以及判断apk是否被修改。可以使用openssl来解码查看证书内容。</p>
+<p><code>openssl pkcs7 -inform DER -in CERT.RSA -noout -print_certs -text</code></p>
+<p>输出结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">Certificate:</span><br><span class="line">    Data:</span><br><span class="line">        Version: 1 (0x0)</span><br><span class="line">        Serial Number: 1 (0x1)</span><br><span class="line">    Signature Algorithm: sha1WithRSAEncryption</span><br><span class="line">        Issuer: CN&#x3D;Android Debug, O&#x3D;Android, C&#x3D;US</span><br><span class="line">        Validity</span><br><span class="line">            Not Before: Aug 12 14:05:31 2020 GMT</span><br><span class="line">            Not After : Aug  5 14:05:31 2050 GMT</span><br><span class="line">        Subject: CN&#x3D;Android Debug, O&#x3D;Android, C&#x3D;US</span><br><span class="line">        Subject Public Key Info:</span><br><span class="line">            Public Key Algorithm: rsaEncryption</span><br><span class="line">                Public-Key: (2048 bit)</span><br><span class="line">                Modulus:</span><br><span class="line">                    00:9d:11:0b:8d:94:5f:28:34:1f:84:9a:1b:6a:1f:</span><br><span class="line">                    4b:1d:c6:19:59:94:6d:1d:33:b3:3d:9f:16:7d:73:</span><br><span class="line">                    ca:40:62:89:d7:39:75:15:67:c8:07:54:63:d0:42:</span><br><span class="line">                    fb:a4:c6:a2:b4:41:b5:19:6f:7c:76:eb:ec:51:3b:</span><br><span class="line">                    d1:fc:0c:f3:eb:db:4d:d8:ec:3c:6a:eb:46:3c:d2:</span><br><span class="line">                    e6:47:fe:8f:f3:8a:07:67:5c:09:9f:de:00:97:60:</span><br><span class="line">                    a7:7b:2b:f0:10:17:81:ec:e0:f7:a7:5a:55:79:89:</span><br><span class="line">                    ed:6b:ba:ea:f8:0d:d6:c2:fe:6c:fc:67:f5:36:97:</span><br><span class="line">                    8e:24:cd:97:41:7b:df:16:0d:63:b8:d6:ab:2b:fe:</span><br><span class="line">                    6a:1e:94:bc:41:44:f4:de:26:c3:44:d0:c2:6e:79:</span><br><span class="line">                    37:a1:3f:a6:a1:57:42:4f:5c:3e:e3:4b:ca:0b:eb:</span><br><span class="line">                    ea:19:dd:6d:fe:c3:34:57:3d:a1:b7:38:44:5b:ca:</span><br><span class="line">                    09:d9:da:70:3a:54:fb:4b:8d:c8:73:73:f7:38:0f:</span><br><span class="line">                    6f:5d:5b:45:f9:0d:88:2d:2d:6e:2b:a5:c9:2a:29:</span><br><span class="line">                    4a:8c:d0:87:74:47:4e:69:18:f8:93:0a:6d:a7:9b:</span><br><span class="line">                    22:3d:0f:38:fb:8c:02:e9:1b:73:97:80:6d:06:31:</span><br><span class="line">                    4f:82:75:dc:0a:76:30:aa:bb:cd:40:3d:3b:56:a6:</span><br><span class="line">                    0d:77</span><br><span class="line">                Exponent: 65537 (0x10001)</span><br><span class="line">    Signature Algorithm: sha1WithRSAEncryption</span><br><span class="line">         90:52:91:03:0b:de:9b:69:da:47:7a:5d:c8:3f:31:e1:3e:6d:</span><br><span class="line">         55:54:e6:29:25:2a:14:25:00:27:21:d1:0d:70:56:ac:3a:bf:</span><br><span class="line">         17:95:c9:bd:a4:83:2a:ee:5e:c9:a6:ef:4c:f0:60:35:86:b3:</span><br><span class="line">         ee:86:9e:9a:94:7b:74:1f:99:86:65:23:a3:13:50:7f:41:ed:</span><br><span class="line">         53:72:7f:83:8b:6d:40:ca:54:c8:25:44:75:b3:49:c0:61:cd:</span><br><span class="line">         4f:11:28:dc:cb:65:76:ce:03:fa:c3:d9:1b:f6:67:af:34:9f:</span><br><span class="line">         25:ab:2f:94:d3:24:ae:be:50:97:76:af:d1:e5:8a:5d:25:4f:</span><br><span class="line">         8a:17:75:de:0f:8d:71:53:38:ed:90:e1:0d:25:20:07:6b:2d:</span><br><span class="line">         2d:37:18:a0:82:e1:54:71:63:7f:97:03:2a:2e:54:1e:d0:53:</span><br><span class="line">         55:85:83:f0:e8:14:46:9c:7f:50:6a:a8:ad:73:17:94:ac:4e:</span><br><span class="line">         8c:8b:56:c0:95:41:47:50:23:36:65:d1:c4:8c:53:85:8f:15:</span><br><span class="line">         8f:fe:94:13:b5:71:74:7e:55:30:78:20:42:50:f7:44:10:77:</span><br><span class="line">         87:92:2a:2a:2d:c8:f1:e8:24:1e:7f:4a:3c:55:f2:87:89:29:</span><br><span class="line">         98:c8:b8:79:37:41:c8:7c:35:c5:8f:1d:5c:15:e3:36:2e:83:</span><br><span class="line">         59:49:db:69</span><br></pre></td></tr></table></figure>
+
+<p>里面很多项都是用来鉴别apk是否被修改了。</p>
+<h3 id="META-INF-MANIFEST-MF"><a href="#META-INF-MANIFEST-MF" class="headerlink" title="META-INF/MANIFEST.MF"></a>META-INF/MANIFEST.MF</h3><p>签名的清单文件，是个文本文件。大致的内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Built-By: Generated-by-ADT</span><br><span class="line">Created-By: Android Gradle 3.5.2</span><br><span class="line"></span><br><span class="line">Name: AndroidManifest.xml</span><br><span class="line">SHA-256-Digest: tQz8omUBWakxQm32m7lgSSAFdbP68612Iq4enf&#x2F;gmxw&#x3D;</span><br><span class="line"></span><br><span class="line">Name: META-INF&#x2F;androidx.appcompat_appcompat.version</span><br><span class="line">SHA-256-Digest: n9KGQtOsoZHlx&#x2F;wjg8&#x2F;W+rsqrIdD8Cnau4mJrFhOMbw&#x3D;</span><br><span class="line"></span><br><span class="line">Name: META-INF&#x2F;androidx.arch.core_core-runtime.version</span><br><span class="line">SHA-256-Digest: wo&#x2F;MpTY3vIjhJK8XJd8Ty5jGne3v1i+zzb4c22t2BiQ&#x3D;</span><br><span class="line"></span><br><span class="line">Name: META-INF&#x2F;androidx.asynclayoutinflater_asynclayoutinflater.version</span><br><span class="line">SHA-256-Digest: WYVJhIUxBN9cNT4vaBoV&#x2F;HkkdC+aLkaMKa8kjc5FzgM&#x3D;</span><br></pre></td></tr></table></figure>
+
+<p>例如我们校验一下AndroidManifest.xml的值</p>
+<p><code>openssl sha256 AndroidManifest.xml</code> 输出结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHA256(AndroidManifest.xml)&#x3D; b50cfca2650159a931426df69bb96049200575b3faf3ad7622ae1e9dffe09b1c</span><br></pre></td></tr></table></figure>
+
+<p>然后我们把这个结果base64编码一下，输出结果如下，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tQz8omUBWakxQm32m7lgSSAFdbP68612Iq4enf&#x2F;gmxw&#x3D;</span><br></pre></td></tr></table></figure>
+
+<p>发现和清单里面记录的一样。如果我们修改了这个文件，和清单里面的结果就不一样了。这里保证进行apk签名验证时所有文件均未被修改</p>
+<h3 id="META-INF-CERT-SF"><a href="#META-INF-CERT-SF" class="headerlink" title="META-INF/CERT.SF"></a>META-INF/CERT.SF</h3><p>签名信息文件，也是文本文件。内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Signature-Version: 1.0</span><br><span class="line">Created-By: 1.0 (Android)</span><br><span class="line">SHA-256-Digest-Manifest: CsbfwGGBNUMOUJt4R7LYm+LGmb72vPx3Knonej3SUY0&#x3D;</span><br><span class="line">X-Android-APK-Signed: 2</span><br><span class="line"></span><br><span class="line">Name: AndroidManifest.xml</span><br><span class="line">SHA-256-Digest: gx84XauTSsCx8N18oEcdgiOHMpjhObi7ywdIEy3OaZU&#x3D;</span><br><span class="line"></span><br><span class="line">Name: META-INF&#x2F;androidx.appcompat_appcompat.version</span><br><span class="line">SHA-256-Digest: ABbgKP0s08CVeuJ5ZMlIZx&#x2F;AvJtb1QhNA0ffeXfCaHk&#x3D;</span><br><span class="line"></span><br><span class="line">Name: META-INF&#x2F;androidx.arch.core_core-runtime.version</span><br><span class="line">SHA-256-Digest: PjygIQMN5T6nIKT&#x2F;hi5PFaxVcEB+W20fr4f0g2n7jrg&#x3D;</span><br></pre></td></tr></table></figure>
+
+<p>和上面的文件非常类似，但是多了两个属性</p>
+<p>SHA-256-Digest-Manifest：这个对应的就是对MANIFEST.MF这个文件的校验。</p>
+<p>X-Android-APK-Signed：使用签名的版本，值为2时表示使用新版APK Signature Scheme v2进行签名。android studio在新版本的sdk构建工具中增加了签名工具apksigner，同时支持旧版的v1签名和android7.0引入的v2签名。</p>
+<p>继续看这个文件的AndroidManifest.xml的值，发现和上面清单的值不一样的。因为这里实际是对上面清单每一项的验证。</p>
+<p><code>Name: AndroidManifest.xml\r\nSHA-256-Digest: tQz8omUBWakxQm32m7lgSSAFdbP68612Iq4enf/gmxw=\r\n\r\n</code> 对这个串进行sha256计算。</p>
+<p><code>831f385dab934ac0b1f0dd7ca0471d8223873298e139b8bbcb0748132dce6995</code> 上面的值sha256的结果。然后继续进行base64编码</p>
+<p><code>gx84XauTSsCx8N18oEcdgiOHMpjhObi7ywdIEy3OaZU=</code> 现在得到的值就和文件中的一致了。</p>
+<h3 id="ODEX"><a href="#ODEX" class="headerlink" title="ODEX"></a>ODEX</h3><p>在android5.0之前主要使用dalvik虚拟机。为了提高dex文件的执行效率，会对dex文件进行一定程度的优化，具体做法就是解析并生成一个odex，然后保存在/data/dalvik-cache目录。以后运行的时候不会读取apk中的dex。而是直接加载优化过的odex。这样节省了运行程序在优化上耗费的时间。</p>
+<h3 id="OAT"><a href="#OAT" class="headerlink" title="OAT"></a>OAT</h3><p>OAT是优化过的，用于art虚拟机执行的dex文件。类似dalvik的odex</p>
+<h3 id="ART虚拟机"><a href="#ART虚拟机" class="headerlink" title="ART虚拟机"></a>ART虚拟机</h3><p>ART使用AOT编译技术，在apk第一次安装或者系统升级，重启时，通过dex2oat将apk中的dex文件静态编译成oat文件存放到设备的/data/dalvik-cache或者/data/app/package目录。我测试安卓10是在dalvik-cache的里面。</p>
+<p>dex2oat更像是编译器，把dalvik字节码编译成native机器码。这样就提高了程序启动的速度。art虚拟机直接执行的oat文件，而不是dex。但是aot有个确定，就是静态编译操作影响apk的安装效率。但是android7.0中增加了jit编译。提高了安装的效率。</p>
+<h3 id="生成OAT文件"><a href="#生成OAT文件" class="headerlink" title="生成OAT文件"></a>生成OAT文件</h3><p>除了安装时会自动生成OAT文件。也可以手动的生成，使用dex2oat命令。–dex-file传入dex路径，–oat-file指定oat文件路径。连接到设备，执行下面的命令。</p>
+<p><code>dex2oat --dex-file=./classes.dex --oat-file=./classes.oat</code> 生成出了oat文件。然后把oat文件pull到电脑上。</p>
+<p><code>file classes.oat</code> 看一下文件的格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classes.oat: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (GNU&#x2F;Linux), dynamically linked, stripped</span><br></pre></td></tr></table></figure>
+
+<p>oat文件格式在设计之初就考虑到最终执行的程序是elf格式的，最终将oat文件格式直接融入android所特有的elf格式。</p>
+<p>既然是一个ELF文件，那么可以看一下符号表。可以使用ndk中的readelf查看。我直接用ida打开查看的符号表。图如下</p>
+<p><img src="/2021/07/01/android3/image-20210701220459221.png" alt="image-20210701220459221"></p>
+<p>一个oat文件必须包含oatdata、oatexec、oatlastword三个符号。</p>
+<p>oatdata：指向的地址是oat所在elf的.rodata段。这里存放的是oat文件头OATHeader、oat的dex文件头，OATDexFile、原始dex文件DexFile、oat的dex类OatClass等信息。</p>
+<p>oatexec：指向的地址是oat所在elf的.text段，这里存放的是编译生成的native指令代码。</p>
+<p>oatlastword：指向的地址是oat文件结束处在elf中的文件偏移，通过它可以知道oat文件的内容在哪里结束。</p>
+<p>OatHeader的结构，书中记录的位置并没有找到对应的struct，但是有个类似的class</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">class <span class="title">PACKED</span><span class="params">(<span class="number">4</span>)</span> OatHeader </span>&#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">uint8_t</span> kOatMagic[] = &#123; <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;t&#x27;</span>, <span class="string">&#x27;\n&#x27;</span> &#125;;</span><br><span class="line">  <span class="comment">// Last oat version changed reason: Math.pow() intrinsic.</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">uint8_t</span> kOatVersion[] = &#123; <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;8&#x27;</span>, <span class="string">&#x27;\0&#x27;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kImageLocationKey = <span class="string">&quot;image-location&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kDex2OatCmdLineKey = <span class="string">&quot;dex2oat-cmdline&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kDex2OatHostKey = <span class="string">&quot;dex2oat-host&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kPicKey = <span class="string">&quot;pic&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kDebuggableKey = <span class="string">&quot;debuggable&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kNativeDebuggableKey = <span class="string">&quot;native-debuggable&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kCompilerFilter = <span class="string">&quot;compiler-filter&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kClassPathKey = <span class="string">&quot;classpath&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kBootClassPathKey = <span class="string">&quot;bootclasspath&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kConcurrentCopying = <span class="string">&quot;concurrent-copying&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span>* kCompilationReasonKey = <span class="string">&quot;compilation-reason&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span> kTrueValue[] = <span class="string">&quot;true&quot;</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span> kFalseValue[] = <span class="string">&quot;false&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">static</span> OatHeader* <span class="title">Create</span><span class="params">(InstructionSet instruction_set,</span></span></span><br><span class="line"><span class="function"><span class="params">                           <span class="keyword">const</span> InstructionSetFeatures* instruction_set_features,</span></span></span><br><span class="line"><span class="function"><span class="params">                           <span class="keyword">uint32_t</span> dex_file_count,</span></span></span><br><span class="line"><span class="function"><span class="params">                           <span class="keyword">const</span> SafeMap&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::<span class="built_in">string</span>&gt;* variable_data)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">IsValid</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">GetValidationErrorMessage</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="title">GetMagic</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">uint32_t</span> <span class="title">GetChecksum</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">uint8_t</span> magic_[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">uint8_t</span> version_[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">uint32_t</span> adler32_checksum_;</span><br><span class="line"></span><br><span class="line">  InstructionSet instruction_set_;</span><br><span class="line">  <span class="keyword">uint32_t</span> instruction_set_features_bitmap_;</span><br><span class="line">  <span class="keyword">uint32_t</span> dex_file_count_;</span><br><span class="line">  <span class="keyword">uint32_t</span> oat_dex_files_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> executable_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> interpreter_to_interpreter_bridge_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> interpreter_to_compiled_code_bridge_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> jni_dlsym_lookup_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> quick_generic_jni_trampoline_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> quick_imt_conflict_trampoline_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> quick_resolution_trampoline_offset_;</span><br><span class="line">  <span class="keyword">uint32_t</span> quick_to_interpreter_bridge_offset_;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The amount that the image this oat is associated with has been patched.</span></span><br><span class="line">  <span class="keyword">int32_t</span> image_patch_delta_;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">uint32_t</span> image_file_location_oat_checksum_;</span><br><span class="line">  <span class="keyword">uint32_t</span> image_file_location_oat_data_begin_;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">uint32_t</span> key_value_store_size_;</span><br><span class="line">  <span class="keyword">uint8_t</span> key_value_store_[<span class="number">0</span>];  <span class="comment">// note variable width data at end</span></span><br><span class="line"></span><br><span class="line">  DISALLOW_COPY_AND_ASSIGN(OatHeader);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>从代码可以直接看到，有些值是固定的。</p>
+<p>magic：文件的标识,固定是“oat\n”。表示oat的头部</p>
+<p>version：oat的文件格式版本</p>
+<p>Adler32_checksum：oat的adler32校验和</p>
+<p>insetruction_set：oat文件使用的指令集。结构如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="class"><span class="keyword">class</span> <span class="title">InstructionSet</span> &#123;</span></span><br><span class="line">  kNone,</span><br><span class="line">  kArm,</span><br><span class="line">  kArm64,</span><br><span class="line">  kThumb2,</span><br><span class="line">  kX86,</span><br><span class="line">  kX86_64,</span><br><span class="line">  kMips,</span><br><span class="line">  kMips64,</span><br><span class="line">  kLast = kMips64</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>dex_file_count：oat文件中包含的dex文件的个数。通常普通app都是1</p>
+<p>executable_offset：oatexec符号所在段的开始位置与oatdata符号所在段的开始位置的偏移。该值通常等于oatdata符号所在段.rodata的大小</p>
+<p>jni_dlsym_lookup_offset：执行过程，如果类方法要调用另外一个方法是jni函数，就需要通过这个字段指向一段代码来调用</p>
+<p>OatHeader下面是OatDexFile结构。数量和dex_file_count这个字段一致。</p>
+<p>然后这里发现OatDexFile的结构和书中的不大一致</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OatDexFile</span> <span class="title">FINAL</span> &#123;</span></span><br><span class="line"> ...</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  OatDexFile(<span class="keyword">const</span> OatFile* oat_file,</span><br><span class="line">             <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; dex_file_location,</span><br><span class="line">             <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; canonical_dex_file_location,</span><br><span class="line">             <span class="keyword">uint32_t</span> dex_file_checksum,</span><br><span class="line">             <span class="keyword">const</span> <span class="keyword">uint8_t</span>* dex_file_pointer,</span><br><span class="line">             <span class="keyword">const</span> <span class="keyword">uint8_t</span>* lookup_table_data,</span><br><span class="line">             <span class="keyword">const</span> IndexBssMapping* method_bss_mapping,</span><br><span class="line">             <span class="keyword">const</span> IndexBssMapping* type_bss_mapping,</span><br><span class="line">             <span class="keyword">const</span> IndexBssMapping* string_bss_mapping,</span><br><span class="line">             <span class="keyword">const</span> <span class="keyword">uint32_t</span>* oat_class_offsets_pointer,</span><br><span class="line">             <span class="keyword">const</span> DexLayoutSections* dex_layout_sections);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AssertAotCompiler</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> OatFile* <span class="keyword">const</span> oat_file_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> dex_file_location_;</span><br><span class="line">  <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> canonical_dex_file_location_;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">uint32_t</span> dex_file_location_checksum_ = <span class="number">0u</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">uint8_t</span>* <span class="keyword">const</span> dex_file_pointer_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">uint8_t</span>* <span class="keyword">const</span> lookup_table_data_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> IndexBssMapping* <span class="keyword">const</span> method_bss_mapping_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> IndexBssMapping* <span class="keyword">const</span> type_bss_mapping_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> IndexBssMapping* <span class="keyword">const</span> string_bss_mapping_ = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">uint32_t</span>* <span class="keyword">const</span> oat_class_offsets_pointer_ = <span class="number">0u</span>;</span><br><span class="line">  <span class="keyword">mutable</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;TypeLookupTable&gt; lookup_table_;</span><br><span class="line">  <span class="keyword">const</span> DexLayoutSections* <span class="keyword">const</span> dex_layout_sections_ = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">OatFile</span>;</span></span><br><span class="line">  <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">OatFileBase</span>;</span></span><br><span class="line">  DISALLOW_COPY_AND_ASSIGN(OatDexFile);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>OatDexFile数组的下面是DexFile结构体。里面存放的是一个个完整的dex。</p>
+<p>OAT的格式图如下</p>
+<p><img src="/2021/07/01/android3/image-20210701232116020.png" alt="image-20210701232116020"></p>
+<h3 id="OAT文件转换成dex文件"><a href="#OAT文件转换成dex文件" class="headerlink" title="OAT文件转换成dex文件"></a>OAT文件转换成dex文件</h3><p>上面看到OAT文件中包含完整的dex文件。所以只要定位到OAT文件中的DexFile结构体，完整导出即可。</p>
+<p>android系统提供了oatdump来导出所有的dex到指定目录</p>
+<p><code>oatdump --export-dex-to=/data/local/tmp --oat-file=./classes.oat </code>命令执行完毕后得到文件<code>classes.dex_export.dex</code></p>
+<p>或者是自己写工具，来解析OAT文件格式，取出dex。也有一种简单的方式，直接搜索文件头”dex\n035”。文件头的0x20字节处保存了大小。有了偏移和大小。直接搜索即可。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2021/07/01/android3/">http://missking.cc/2021/07/01/android3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/android%E5%9F%BA%E7%A1%80/">android基础</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/07/08/android4/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">dex起步探索</div></div></a></div><div class="next-post pull-right"><a href="/2021/06/28/android2/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">android基础篇二（笔记）</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/07/08/android4/" title="dex起步探索"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-08</div><div class="title">dex起步探索</div></div></a></div><div><a href="/2021/06/28/android2/" title="android基础篇二（笔记）"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-28</div><div class="title">android基础篇二（笔记）</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84android%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F-2"><span class="toc-number">1.</span> <span class="toc-text">常见的android文件格式(2)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AndroidManifest-xml"><span class="toc-number">1.1.</span> <span class="toc-text">AndroidManifest.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AXML%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">AXML文件格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AXML%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9"><span class="toc-number">1.3.</span> <span class="toc-text">AXML文件修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#resources-arsc"><span class="toc-number">1.4.</span> <span class="toc-text">resources.arsc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARSC%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">1.5.</span> <span class="toc-text">ARSC文件的修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#META-INF%E7%9B%AE%E5%BD%95"><span class="toc-number">1.6.</span> <span class="toc-text">META-INF目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#META-INF-CERT-RSA"><span class="toc-number">1.7.</span> <span class="toc-text">META-INF&#x2F;CERT.RSA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#META-INF-MANIFEST-MF"><span class="toc-number">1.8.</span> <span class="toc-text">META-INF&#x2F;MANIFEST.MF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#META-INF-CERT-SF"><span class="toc-number">1.9.</span> <span class="toc-text">META-INF&#x2F;CERT.SF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ODEX"><span class="toc-number">1.10.</span> <span class="toc-text">ODEX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OAT"><span class="toc-number">1.11.</span> <span class="toc-text">OAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ART%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.12.</span> <span class="toc-text">ART虚拟机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90OAT%E6%96%87%E4%BB%B6"><span class="toc-number">1.13.</span> <span class="toc-text">生成OAT文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OAT%E6%96%87%E4%BB%B6%E8%BD%AC%E6%8D%A2%E6%88%90dex%E6%96%87%E4%BB%B6"><span class="toc-number">1.14.</span> <span class="toc-text">OAT文件转换成dex文件</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2021/07/01/android3/'
+    this.page.identifier = '2021/07/01/android3/'
+    this.page.title = 'android基础篇三（笔记）'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

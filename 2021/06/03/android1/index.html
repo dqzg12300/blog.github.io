@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>android基础篇一（笔记） | king的博客</title><meta name="keywords" content="andorid基础"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强） 反编译和回编android最常用的反编译工具apktool。可以跨平台win、linux、maos。用来反编译apk文件，反汇编成smali代码。然后可以修改smali代码后。再用apktool重新编译回apk，再签名。就可以直接安装了。贴上github地址：https:&#x2F;&#x2F;github.com&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android基础篇一（笔记）">
+<meta property="og:url" content="http://missking.cc/2021/06/03/android1/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强） 反编译和回编android最常用的反编译工具apktool。可以跨平台win、linux、maos。用来反编译apk文件，反汇编成smali代码。然后可以修改smali代码后。再用apktool重新编译回apk，再签名。就可以直接安装了。贴上github地址：https:&#x2F;&#x2F;github.com&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2021-06-03T21:10:35.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:30.651Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="andorid基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2021/06/03/android1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'android基础篇一（笔记）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-05 12:58:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">android基础篇一（笔记）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-06-03T21:10:35.000Z" title="发表于 2021-06-03 21:10:35">2021-06-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:30.651Z" title="更新于 2022-09-05 12:58:30">2022-09-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="android基础篇一（笔记）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这里主要是看书的笔记。从基础开始。不断记录。直到啃完这本书（android软件安全权威指南：丰生强）</p>
+<h2 id="反编译和回编"><a href="#反编译和回编" class="headerlink" title="反编译和回编"></a>反编译和回编</h2><p>android最常用的反编译工具apktool。可以跨平台win、linux、maos。用来反编译apk文件，反汇编成smali代码。然后可以修改smali代码后。再用apktool重新编译回apk，再签名。就可以直接安装了。贴上github地址：<a target="_blank" rel="noopener" href="https://github.com/iBotPeaches/Apktool">https://github.com/iBotPeaches/Apktool</a></p>
+<p>mac可以直接<code>brew install apktool</code>安装</p>
+<p>反编译命令：<code>apktool d ./app-debug.apk -o outdir</code> </p>
+<a id="more"></a>
+
+<p>反编译后，得到若干文件。res下面是资源文件，smali下面是代码。字符串资源一般在res\values\strings.xml，也有可能硬编码进源码。在apk中。这个字符串资源被加密存储为resources.arsc存放。反编译才解密出来成strings.xml的。</p>
+<p>在正向android开发的时候。字符串资源都在gen/R.java中，而且每个字符串都有个对应的索引。反编译后，这个对应的索引放在public.xml里面。</p>
+<p>outdir/unknown/instant-run.zip是android studio为了快速编译的优化，会将代码生成很多个片段。然后以dex的格式打包到instant-run.zip。启动时，再用特定的方式来加载这个文件。只有编译debug版本时会出现。</p>
+<p>回编指令：<code>apktool b outdir -o app-debug-rel.apk</code></p>
+<p>如果汇编失败，错误是ResourcesFull(Androlib.java:477)</p>
+<p>是因为apktool使用的framework-res.apk的版本太老。例如当前apk的API是25。那就找个对应手机。</p>
+<p>然后<code>adb pull /system/framework/framework-res.apk</code>导出这个文件</p>
+<p>然后安装<code>apt tool if ./framework-res.apk</code></p>
+<p>如果汇编还是失败就删除掉layout-v22目录</p>
+<p>我测试2.5.0的apktool没有上面的问题</p>
+<h2 id="dalvik执行格式与字节码"><a href="#dalvik执行格式与字节码" class="headerlink" title="dalvik执行格式与字节码"></a>dalvik执行格式与字节码</h2><p>android程序不是运行在java虚拟机，而是运行在dalvik虚拟机。android4.4以后又引入了art虚拟机。之前是由jit执行dalvik，后来换成AOT编译art。art也向下兼容，可以执行dalvik字节码。</p>
+<h3 id="dalvik虚拟机和java虚拟机的区别"><a href="#dalvik虚拟机和java虚拟机的区别" class="headerlink" title="dalvik虚拟机和java虚拟机的区别"></a>dalvik虚拟机和java虚拟机的区别</h3><p>1、字节码不同，分别使用的java字节码和dalvik字节码。java代码编译后，生成java字节码保存在class，然后java虚拟机直接解码运行了。而android是java字节码再转换成dalvik字节码，再打包成dex可执行文件。最后dalvik虚拟机解释dex文件来执行字节码。</p>
+<p>2、dalvik可执行文件的体积更小</p>
+<p>sdk中有个叫dx的工具是用来把java字节码转换成dalvik字节码。并且重新排列java类文件。消除冗余信息，避免重复加载。dx对所有java类中的常量池进行了分解。去掉冗余信息组成一个常量池。并且所有类共享。比如A类中有参数为一个string的签名方法。B类，C类中都有。这样方法签名就重复很多了。dx就把这些签名方法统一放一起。所有类从一个地方取。相同的字符串和常量在dex中只会出现一次。所以dalvik的可执行文件更小。下面是dex文件的格式</p>
+<p><img src="/2021/06/03/android1/image-20210604213905401.png" alt="image-20210604213905401"></p>
+<p>3、虚拟机架构不同</p>
+<p>java虚拟机是栈架构的。dalvik是寄存器架构的。直接寄存器的操作肯定是比栈的效率要更高。</p>
+<h3 id="dalvik虚拟机的执行流程"><a href="#dalvik虚拟机的执行流程" class="headerlink" title="dalvik虚拟机的执行流程"></a>dalvik虚拟机的执行流程</h3><p>android系统主要分为4个大块：linux内核、函数库、android运行时、应用程序框架、应用程序。</p>
+<p>dalvik虚拟机属于android运行时环境。它和一些核心库一起负责应用的运行。</p>
+<p>android系统启动-&gt;加载内核-&gt;执行init进程-&gt;init进程负责初始化,然后读取init.rc，然后启动重要的外部程序Zygote</p>
+<p>Zygote是所有进程的孵化器进程。启动后先初始化dalvik虚拟机，然后启动system_server进程并进入zygote模式。然后通过socket等候命令。当打开一个引用时，system_server进程通过Binder IPC方式将命令发送给zygote。前面用socket等候命令的zygote收到命令了。就fork一个自己创建出了个dalvik虚拟机实例来执行应用程序的入口函数。完成了程序的启动过程。</p>
+<p>zygote有三种创建进程方法</p>
+<p>fork()                            创建zygote进程（实际不会调用）</p>
+<p>forkAndSpecialize()     创建非zygote进程</p>
+<p>forkSystemServer()     创建系统服务进程</p>
+<p>for完毕后，就是dalvik虚拟机来完成执行字节码。</p>
+<p>dalvik的执行流程是，先用loadlCassFromdEX()装载类，每个类解析成ClassObject结构存储。所有类存储到gDvm.loadedClasses中。字节码验证器用dvmVerifyCodeFlow()对装入的代码校验。然后虚拟机用findClass查找有main()的方法类。最后调用dvmInterpret()来初始化解释器并执行字节码。这里我去查了一下。发现4.4.4版本是有dvmInterpret的。不过较新的版本就没有了。</p>
+<h3 id="dalvik指令格式"><a href="#dalvik指令格式" class="headerlink" title="dalvik指令格式"></a>dalvik指令格式</h3><p><strong>位描述约定：</strong></p>
+<p>每16位用空格分开</p>
+<p>每个字母代表4位，每个字母按高字节到底字节排序，每4位之前可能用|分割</p>
+<p>顺序采用大写A-Z表示4位的操作码。op表示8位的操作码</p>
+<p>Θ表示字段所有位的值是0</p>
+<p><strong>指令格式标识的约定：</strong></p>
+<p>指令格式标识大都是三个字符组成。前两个是数字，后一个是字母</p>
+<p>第一个数字代表由多少个16位的字组成</p>
+<p>第二个数字是最多使用的寄存器个数</p>
+<p>第三个字母为类型码，标识指令使用的额外数据类型</p>
+<p>特殊情况指令末尾多出一个字母。是s表示采用静态链接，是i表示应该被内联处理。</p>
+<p>（这块看的不是怎么明白。以后再回头仔细琢磨）</p>
+<h3 id="dex反汇编"><a href="#dex反汇编" class="headerlink" title="dex反汇编"></a>dex反汇编</h3><p>android官方提供的反汇编工具dexdump和第三方的baksmali</p>
+<p>反汇编命令<code>dexdump -d classes.dex</code>  </p>
+<p>结果如下。这里注意。dexdump工具是在sdk的build-tools目录中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2336d0: 7010 8447 0100                         |0000: invoke-direct &#123;v1&#125;, Lokio&#x2F;SegmentedByteString;.toByteString:()Lokio&#x2F;ByteString; &#x2F;&#x2F; method@4784</span><br><span class="line">2336d6: 0c00                                   |0003: move-result-object v0</span><br><span class="line">2336d8: 6e10 7a46 0000                         |0004: invoke-virtual &#123;v0&#125;, Lokio&#x2F;ByteString;.utf8:()Ljava&#x2F;lang&#x2F;String; &#x2F;&#x2F; method@467a</span><br><span class="line">2336de: 0c00                                   |0007: move-result-object v0</span><br><span class="line">2336e0: 1100                                   |0008: return-object v0</span><br></pre></td></tr></table></figure>
+
+<p>baksmali是第三方的。git地址：<a target="_blank" rel="noopener" href="https://github.com/JesusFreke/smali.git">https://github.com/JesusFreke/smali.git</a></p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://bitbucket.org/JesusFreke/smali/downloads/">https://bitbucket.org/JesusFreke/smali/downloads/</a></p>
+<p>两者的区别是baksmali的寄存器命名法采用的p命名法，dexdump采用的v命名法。另外baksmali还支持打包反汇编的代码生成dex。</p>
+<p>反汇编命令<code>baksmali d classes.dex -o outdata</code></p>
+<p>好像老版本的命令不一样。我这里用的是2.5.2。</p>
+<p>前面dexdump的结果是直接将解析的结果全部打印出来。而baksmali是将结果解析到一个文件夹里面。层级划分的更加好。所以个人觉得baksmali要更方便点。</p>
+<h3 id="dalvik寄存器"><a href="#dalvik寄存器" class="headerlink" title="dalvik寄存器"></a>dalvik寄存器</h3><p>dalvik虚拟机是寄存器架构的。将部分寄存器映射到了arm寄存器上。还有一部分通过调用栈进行模拟</p>
+<p>使用的寄存器都是32位的。使用两个相邻的寄存器处理64位的类型</p>
+<p>最大支持的寄存器数。之前指令格式的地方，有说dalvik指令的约定。指令每16位划分为一个部分。所以寄存器最大只能是16位存储的极限65535</p>
+<h3 id="dalvik指令集"><a href="#dalvik指令集" class="headerlink" title="dalvik指令集"></a>dalvik指令集</h3><p>这里主要是看smali代码有不懂的时候。可以过来查阅对应指令的说明。详细见63页</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2021/06/03/android1/">http://missking.cc/2021/06/03/android1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/andorid%E5%9F%BA%E7%A1%80/">andorid基础</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/06/24/fridatools/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">菜鸟学飞之frida整合怪</div></div></a></div><div class="next-post pull-right"><a href="/2021/05/14/ollvm3/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用unidbg还原标准ollvm的fla控制流程平坦化</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E7%BC%96%E8%AF%91%E5%92%8C%E5%9B%9E%E7%BC%96"><span class="toc-number">1.</span> <span class="toc-text">反编译和回编</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dalvik%E6%89%A7%E8%A1%8C%E6%A0%BC%E5%BC%8F%E4%B8%8E%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">dalvik执行格式与字节码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dalvik%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%92%8Cjava%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.1.</span> <span class="toc-text">dalvik虚拟机和java虚拟机的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dalvik%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">dalvik虚拟机的执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dalvik%E6%8C%87%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">dalvik指令格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dex%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="toc-number">2.4.</span> <span class="toc-text">dex反汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dalvik%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">2.5.</span> <span class="toc-text">dalvik寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dalvik%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="toc-number">2.6.</span> <span class="toc-text">dalvik指令集</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2021/06/03/android1/'
+    this.page.identifier = '2021/06/03/android1/'
+    this.page.title = 'android基础篇一（笔记）'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

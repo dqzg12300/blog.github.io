@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>逆向工程权威指南的看书笔记 | king的博客</title><meta name="keywords" content="逆向基础"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="书籍：逆向工程权威指南上（看书笔记）这本书有各种架构的相关说明，省略掉非arm64架构的相关记录1、CPUcpu：执行程序机器码的硬件单元。 指令码：cpu处理的底层命令。 机器码：给cpu执行的程序代码。 汇编语言：为了便于编写而创造出来的，最接近机器码的语言。 指令集架构：不同架构的cpu处理的指令集都不一样，arm指令集最早先都被封装在4个字节里，后来由于发现4个字节很少用满，就推出了封装在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向工程权威指南的看书笔记">
+<meta property="og:url" content="http://missking.cc/2022/03/20/CPU%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="书籍：逆向工程权威指南上（看书笔记）这本书有各种架构的相关说明，省略掉非arm64架构的相关记录1、CPUcpu：执行程序机器码的硬件单元。 指令码：cpu处理的底层命令。 机器码：给cpu执行的程序代码。 汇编语言：为了便于编写而创造出来的，最接近机器码的语言。 指令集架构：不同架构的cpu处理的指令集都不一样，arm指令集最早先都被封装在4个字节里，后来由于发现4个字节很少用满，就推出了封装在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-03-20T15:38:13.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:30.561Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="逆向基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2022/03/20/CPU%E5%9F%BA%E7%A1%80/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '逆向工程权威指南的看书笔记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-05 12:58:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">逆向工程权威指南的看书笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:30.561Z" title="更新于 2022-09-05 12:58:30">2022-09-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="逆向工程权威指南的看书笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="书籍：逆向工程权威指南上（看书笔记）"><a href="#书籍：逆向工程权威指南上（看书笔记）" class="headerlink" title="书籍：逆向工程权威指南上（看书笔记）"></a>书籍：逆向工程权威指南上（看书笔记）</h3><h3 id="这本书有各种架构的相关说明，省略掉非arm64架构的相关记录"><a href="#这本书有各种架构的相关说明，省略掉非arm64架构的相关记录" class="headerlink" title="这本书有各种架构的相关说明，省略掉非arm64架构的相关记录"></a>这本书有各种架构的相关说明，省略掉非arm64架构的相关记录</h3><h3 id="1、CPU"><a href="#1、CPU" class="headerlink" title="1、CPU"></a>1、CPU</h3><p>cpu：执行程序机器码的硬件单元。</p>
+<p>指令码：cpu处理的底层命令。</p>
+<p>机器码：给cpu执行的程序代码。</p>
+<p>汇编语言：为了便于编写而创造出来的，最接近机器码的语言。</p>
+<p>指令集架构：不同架构的cpu处理的指令集都不一样，arm指令集最早先都被封装在4个字节里，后来由于发现4个字节很少用满，就推出了封装在2个字节的Thumb指令集及架构，但是不能封装所有的arm指令。就推出了2个字节封装不下的指令就由4字节封装的Thumb-2。最后arm64指令集又回到了固定使用4字节的指令集。</p>
+<h3 id="2、简单函数"><a href="#2、简单函数" class="headerlink" title="2、简单函数"></a>2、简单函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int f()&#123;</span><br><span class="line">    return 123;</span><br><span class="line">&#125;</span><br><span class="line">--------汇编代码--------</span><br><span class="line">f:</span><br><span class="line">    mov r0,#0x7b ;</span><br><span class="line">    bx lr</span><br><span class="line">    endp</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到arm程序使用r0寄存器存放返回值,使用lr存放函数结束后返回的地址。</p>
+<h3 id="3、arm64的hello-world例子"><a href="#3、arm64的hello-world例子" class="headerlink" title="3、arm64的hello world例子"></a>3、arm64的hello world例子</h3><p>首先写个例子</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world!&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要先编译成android的可执行程序</p>
+<p>首先下载个用来编译的工具ndk-r12b</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;dl.google.com&#x2F;android&#x2F;repository&#x2F;android-ndk-r12b-linux-x86_64.zip</span><br></pre></td></tr></table></figure>
+
+<p>然后编写我们的编译脚本build_android.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CC_HOME=/home/king/Android/Sdk/ndk/android-ndk-r12b</span><br><span class="line">BIN_PATH=<span class="variable">$&#123;CC_HOME&#125;</span>/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin</span><br><span class="line">CC=<span class="variable">$&#123;BIN_PATH&#125;</span>/aarch64-linux-android-gcc</span><br><span class="line">CXX=<span class="variable">$&#123;BIN_PATH&#125;</span>/aarch64-linux-android-g++</span><br><span class="line">AS=<span class="variable">$&#123;BIN_PATH&#125;</span>/aarch64-linux-android-as</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;CC&#125;</span>  -o hello main.c -pie -fPIE -I<span class="variable">$&#123;CC_HOME&#125;</span>/platforms/android-24/arch-arm64/usr/include -L<span class="variable">$&#123;CC_HOME&#125;</span>/platforms/android-24/arch-arm64/usr/lib --sysroot=<span class="variable">$&#123;CC_HOME&#125;</span>/platforms/android-23/arch-arm64/usr/</span><br></pre></td></tr></table></figure>
+
+<p>或者是使用llvm也一样可以编译</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//编译arm版本</span><br><span class="line">/Users/king/Library/Android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/darwin-x86_64/bin/armv7a-linux-androideabi24-clang++  ./main.cpp</span><br><span class="line">//编译arm64版本</span><br><span class="line">/Users/king/Library/Android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android24-clang++  ./main.cpp</span><br></pre></td></tr></table></figure>
+
+<p>编译完成之后，使用<code>file hello</code>查看一下刚刚编译的文件是否正确</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter &#x2F;system&#x2F;bin&#x2F;linker64, not stripped</span><br></pre></td></tr></table></figure>
+
+<p>接着我们用ida来分析这个文件，查看汇编代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">; int __cdecl main(int argc, const char **argv, const char **envp)</span><br><span class="line">EXPORT main</span><br><span class="line">main</span><br><span class="line"></span><br><span class="line">var_s0&#x3D;  0</span><br><span class="line"></span><br><span class="line">STP             X29, X30, [SP,#-0x10+var_s0]!</span><br><span class="line">MOV             X29, SP</span><br><span class="line">ADRL            X0, aHelloWorld ; &quot;hello world!&quot;</span><br><span class="line">BL              .printf</span><br><span class="line">MOV             W0, #0</span><br><span class="line">LDP             X29, X30, [SP+var_s0],#0x10</span><br><span class="line">RET</span><br><span class="line">; End of function main</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在函数开始时使用指令<code>STP</code>将X29和X30寄存器存放到了数据栈中保存，然后在函数结束的时候，使用指令<code>LDP</code>将X29和X30再从数据栈取值填充回去。同样也是通过W0寄存器存放返回值。在ARM64中，X29相当于是FP寄存器，X30是LR寄存器。所以这两个寄存器经常在函数的开始部分和结尾部分成对出现</p>
+<p><code>ADR</code>指令是将PC寄存器的值加上字符串偏移量，由此找到内存中字符串常量的绝对地址，然后赋值给X0寄存器。</p>
+<p><code>BL</code>调用printf实际上是将下一条指令<code>MOV             W0, #0</code>的地址保存到LR寄存器中，然后将printf的函数地址写入PC寄存器，下一条指令会执行PC寄存器指向的地址，当printf执行完成后，会从LR寄存器获取到返回地址，然后函数继续执行。</p>
+<p>最后返回W0寄存器是X0寄存器的低32位，如果我们定义的函数返回值不是int而是int64，则这里会变成返回X0寄存器。</p>
+<h3 id="4、函数序言和函数尾声"><a href="#4、函数序言和函数尾声" class="headerlink" title="4、函数序言和函数尾声"></a>4、函数序言和函数尾声</h3><p>也就是前面看到的FP和LR寄存器值保存到数据栈中。这是为了在函数执行期间，这些寄存器的值不受后汉书运行的影响，在函数结束时，能将这些寄存器的值还原给调用者。通过序言和尾声的特征，我们可以在汇编中识别出各个函数的范围。</p>
+<h3 id="5、栈的用途"><a href="#5、栈的用途" class="headerlink" title="5、栈的用途"></a>5、栈的用途</h3><p>前面的例子中，在函数的开始和结尾，就用到了栈来保护相关寄存器的值不受影响。</p>
+<p>如果有一个函数不调用其他函数，就像树上最末端的样子一样你，就叫做<code>叶函数（leaf function）</code>，叶函数的特点是不用保存LR寄存器的值。如果叶函数代码短到只用几个寄存器，那么也有可能不会使用数据栈，这种叶函数的运行速度就会很快。</p>
+<p>也可以使用栈来为函数传递参数。</p>
+<p>alloca函数直接使用栈来分配内存，是很请的内存不用特地free来释放。比如x86里函数尾声的代码会还原寄存器ESP的值，把数据栈还原为函数启动之前的状态。</p>
+<p>栈的脏数据，在函数退出以后，原有栈空间的局部变量不会自动清除，就成了栈的脏数据。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a=<span class="number">1</span>,b=<span class="number">2</span>,c=<span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a,b,c;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d,%d,%d&quot;</span>,a,b,c);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    f1();</span><br><span class="line">    f2();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的例子最后打印1,2,3。就是因为使用到了栈上的脏数据。</p>
+<p>所以就是在运行一个函数时，栈中的值受前一个函数的影响，而获得了前一个函数的变量值，这种就是脏数据。</p>
+<h3 id="6、printf参数的传递"><a href="#6、printf参数的传递" class="headerlink" title="6、printf参数的传递"></a>6、printf参数的传递</h3><p>在arm中，参数传递时，前4个参数会传递给r0-r3寄存器，如果参数更加长，其他的参数会存放在栈中。</p>
+<p>b指令和bl指令的差别是，b指令只负责跳转，不会根据LR寄存器返回，而BL则会将LR寄存器保存到栈中。</p>
+<p>下面看个printf的参数传递例子</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;data: %d %d %d\n&quot;</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>生成汇编如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">STMFD           SP!, &#123;R11,LR&#125;</span><br><span class="line">MOV             R11, SP                                </span><br><span class="line">SUB             SP, SP, #8                        </span><br><span class="line">MOV             R0, #0                                </span><br><span class="line">STR             R0, [SP,#8+var_4]            </span><br><span class="line">LDR             R0, &#x3D;(aDataDDD - 0x1478)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;data: %d %d %d\n&quot;</span><br><span class="line">MOV             R1, #1</span><br><span class="line">MOV             R2, #2</span><br><span class="line">MOV             R3, #3</span><br><span class="line">BL              printf</span><br><span class="line">MOV             R0, #0</span><br><span class="line">MOV             SP, R11</span><br><span class="line">LDMFD           SP!, &#123;R11,PC&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到三个值是直接存放在R1,R2,R3寄存器中，接下来看看更多参数的情况</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;data: %d %d %d %d %d %d %d %d %d\n&quot;</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后再用ida查看一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">STMFD           SP!, &#123;R4-R7,R11,LR&#125;</span><br><span class="line">ADD             R11, SP, #0x10</span><br><span class="line">SUB             SP, SP, #0x20</span><br><span class="line">MOV             R0, #0</span><br><span class="line">STR             R0, [R11,#var_14]</span><br><span class="line">LDR             R0, &#x3D;(aDataDDDDDDDDD - 0x1498)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;data: %d %d %d %d %d %d %d %d %d\n&quot;</span><br><span class="line">MOV             R1, #1</span><br><span class="line">MOV             R2, #2</span><br><span class="line">MOV             R3, #3</span><br><span class="line">MOV             R7, #4</span><br><span class="line">MOV             R6, #5</span><br><span class="line">MOV             R5, #6</span><br><span class="line">MOV             R4, #7</span><br><span class="line">MOV             LR, #8</span><br><span class="line">MOV             R12, #9</span><br><span class="line">STR             R7, [SP,#0x30+var_30]</span><br><span class="line">STR             R6, [SP,#0x30+var_2C]</span><br><span class="line">STR             R5, [SP,#0x30+var_28]</span><br><span class="line">STR             R4, [SP,#0x30+var_24]</span><br><span class="line">STR             LR, [SP,#0x30+var_20]</span><br><span class="line">STR             R12, [SP,#0x30+var_1C]</span><br><span class="line">BL              printf</span><br><span class="line">MOV             R0, #0</span><br><span class="line">SUB             SP, R11, #0x10</span><br><span class="line">LDMFD           SP!, &#123;R4-R7,R11,PC&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到r0-r3的值没有放进栈中，r4后面的寄存器放到了栈中，再调用的printf。</p>
+<p>另外我们可以看到对栈的处理，就知道是如何在函数执行完成时还原栈的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ADD             R11, SP, #0x10  &#x2F;&#x2F;函数开始时，先将sp+0x10的值保存到r11</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">SUB             SP, R11, #0x10  &#x2F;&#x2F;函数开始时，先将r11-0x10的值还原到sp</span><br></pre></td></tr></table></figure>
+
+<p>上面可以看到结束函数时栈的地址是如何还原，原本栈上的数据依然在那里，所以前面那个脏数据的例子就会出现那样的效果。</p>
+<h3 id="7、scanf函数"><a href="#7、scanf函数" class="headerlink" title="7、scanf函数"></a>7、scanf函数</h3><p>这里作者主要通过这个函数演示一下数据指针的传递。例子如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;enter num:\n&quot;</span>);</span><br><span class="line">    <span class="keyword">int</span> num;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;num);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;input num:%d&quot;</span>,num);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后看看arm的汇编如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">STMFD           SP!, &#123;R11,LR&#125;</span><br><span class="line">MOV             R11, SP</span><br><span class="line">SUB             SP, SP, #8</span><br><span class="line">MOV             R0, #0</span><br><span class="line">STR             R0, [SP,#8+var_4]</span><br><span class="line">LDR             R0, &#x3D;(aEnterNum - 0x14A0)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;enter num:\n&quot;</span><br><span class="line">BL              printf</span><br><span class="line">LDR             R0, &#x3D;(unk_3C4 - 0x14AC)</span><br><span class="line">ADD             R0, PC, R0 ; unk_3C4 ; format</span><br><span class="line">MOV             R1, SP</span><br><span class="line">BL              scanf</span><br><span class="line">LDR             R1, [SP,#8+var_8]</span><br><span class="line">LDR             R0, &#x3D;(aInputNumD - 0x14C0)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;input num:%d&quot;</span><br><span class="line">BL              printf</span><br><span class="line">MOV             R0, #0</span><br><span class="line">MOV             SP, R11</span><br><span class="line">LDMFD           SP!, &#123;R11,PC&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到scanf的第二个参数直接是将sp传进去了，然后执行结束后，再用ldr将sp中的数据读取出来。</p>
+<p>下面看看在arm64时的汇编，区别不大。不过看起来更加清晰一些。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SUB             SP, SP, #0x20</span><br><span class="line">STP             X29, X30, [SP,#0x10+var_s0]</span><br><span class="line">ADD             X29, SP, #0x10</span><br><span class="line">MOV             W8, WZR</span><br><span class="line">STR             W8, [SP,#0x10+var_C]</span><br><span class="line">STUR            WZR, [X29,#var_4]</span><br><span class="line">ADRP            X0, #aEnterNum@PAGE ; &quot;enter num:\n&quot;</span><br><span class="line">ADD             X0, X0, #aEnterNum@PAGEOFF ; &quot;enter num:\n&quot;</span><br><span class="line">BL              .printf</span><br><span class="line">ADRP            X0, #unk_578@PAGE</span><br><span class="line">ADD             X0, X0, #unk_578@PAGEOFF</span><br><span class="line">ADD             X1, SP, #0x10+var_8</span><br><span class="line">BL              .scanf</span><br><span class="line">LDR             W1, [SP,#0x10+var_8]</span><br><span class="line">ADRP            X0, #aInputNumD@PAGE ; &quot;input num:%d&quot;</span><br><span class="line">ADD             X0, X0, #aInputNumD@PAGEOFF ; &quot;input num:%d&quot;</span><br><span class="line">BL              .printf</span><br><span class="line">LDR             W0, [SP,#0x10+var_C]</span><br><span class="line">LDP             X29, X30, [SP,#0x10+var_s0]</span><br><span class="line">ADD             SP, SP, #0x20</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
+
+<p>如果num变量是全局变量的情况又会有什么不同呢。下面看看调整后的代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> num;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;enter num:\n&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;num);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;input num:%d&quot;</span>,num);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是arm汇编</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">STMFD           SP!, &#123;R11,LR&#125;</span><br><span class="line">MOV             R11, SP</span><br><span class="line">SUB             SP, SP, #8</span><br><span class="line">MOV             R0, #0</span><br><span class="line">STR             R0, [SP,#8+var_4]</span><br><span class="line">LDR             R0, &#x3D;(aEnterNum - 0x14A0)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;enter num:\n&quot;</span><br><span class="line">BL              printf</span><br><span class="line">LDR             R0, &#x3D;(unk_3C4 - 0x14AC)</span><br><span class="line">ADD             R0, PC, R0 ; unk_3C4 ; format</span><br><span class="line">LDR             R1, &#x3D;(num - 0x14B4)</span><br><span class="line">ADD             R1, PC, R1 ; num</span><br><span class="line">BL              scanf</span><br><span class="line">LDR             R0, &#x3D;(num - 0x14C0)</span><br><span class="line">ADD             R0, PC, R0 ; num</span><br><span class="line">LDR             R1, [R0]</span><br><span class="line">LDR             R0, &#x3D;(aInputNumD - 0x14CC)</span><br><span class="line">ADD             R0, PC, R0 ; &quot;input num:%d&quot;</span><br><span class="line">BL              printf</span><br><span class="line">MOV             R0, #0</span><br><span class="line">MOV             SP, R11</span><br><span class="line">LDMFD           SP!, &#123;R11,PC&#125;</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2022/03/20/CPU%E5%9F%BA%E7%A1%80/">http://missking.cc/2022/03/20/CPU%E5%9F%BA%E7%A1%80/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">逆向基础</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/04/11/Kernel1/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">linux内核书籍阅读笔记1</div></div></a></div><div class="next-post pull-right"><a href="/2022/01/27/MikRom/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">FartExt超进化之奇奇怪怪的新ROM工具MikRom</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%A6%E7%B1%8D%EF%BC%9A%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E4%B8%8A%EF%BC%88%E7%9C%8B%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">书籍：逆向工程权威指南上（看书笔记）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E6%9C%AC%E4%B9%A6%E6%9C%89%E5%90%84%E7%A7%8D%E6%9E%B6%E6%9E%84%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AF%B4%E6%98%8E%EF%BC%8C%E7%9C%81%E7%95%A5%E6%8E%89%E9%9D%9Earm64%E6%9E%B6%E6%9E%84%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">这本书有各种架构的相关说明，省略掉非arm64架构的相关记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81CPU"><span class="toc-number">3.</span> <span class="toc-text">1、CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%AE%80%E5%8D%95%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">2、简单函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81arm64%E7%9A%84hello-world%E4%BE%8B%E5%AD%90"><span class="toc-number">5.</span> <span class="toc-text">3、arm64的hello world例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%87%BD%E6%95%B0%E5%BA%8F%E8%A8%80%E5%92%8C%E5%87%BD%E6%95%B0%E5%B0%BE%E5%A3%B0"><span class="toc-number">6.</span> <span class="toc-text">4、函数序言和函数尾声</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E6%A0%88%E7%9A%84%E7%94%A8%E9%80%94"><span class="toc-number">7.</span> <span class="toc-text">5、栈的用途</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%E3%80%81printf%E5%8F%82%E6%95%B0%E7%9A%84%E4%BC%A0%E9%80%92"><span class="toc-number">8.</span> <span class="toc-text">6、printf参数的传递</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%E3%80%81scanf%E5%87%BD%E6%95%B0"><span class="toc-number">9.</span> <span class="toc-text">7、scanf函数</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2022/03/20/CPU%E5%9F%BA%E7%A1%80/'
+    this.page.identifier = '2022/03/20/CPU基础/'
+    this.page.title = '逆向工程权威指南的看书笔记'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

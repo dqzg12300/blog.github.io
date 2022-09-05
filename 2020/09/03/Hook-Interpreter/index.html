@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>使用frida hook解释器Interpreter | king的博客</title><meta name="keywords" content="基础,frida"><meta name="author" content="king"><meta name="copyright" content="king"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="学习的记录 准备hook一下Interpreter解释器的所有执行函数。先看下art&#x2F;runtime&#x2F;interpreter&#x2F;interpreter.cc这个主要文件 123456enum InterpreterImplKind &amp;#123;  kSwitchImplKind,        &#x2F;&#x2F; Switch-based interpreter implementation.  kMterpIm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用frida hook解释器Interpreter">
+<meta property="og:url" content="http://missking.cc/2020/09/03/Hook-Interpreter/index.html">
+<meta property="og:site_name" content="king的博客">
+<meta property="og:description" content="学习的记录 准备hook一下Interpreter解释器的所有执行函数。先看下art&#x2F;runtime&#x2F;interpreter&#x2F;interpreter.cc这个主要文件 123456enum InterpreterImplKind &amp;#123;  kSwitchImplKind,        &#x2F;&#x2F; Switch-based interpreter implementation.  kMterpIm">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-09-03T22:29:32.000Z">
+<meta property="article:modified_time" content="2022-09-05T12:58:30.569Z">
+<meta property="article:author" content="king">
+<meta property="article:tag" content="基础,frida">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://missking.cc/2020/09/03/Hook-Interpreter/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用frida hook解释器Interpreter',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-09-05 12:58:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/assets/blogImg/litten.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">king的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用frida hook解释器Interpreter</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-03T22:29:32.000Z" title="发表于 2020-09-03 22:29:32">2020-09-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-05T12:58:30.569Z" title="更新于 2022-09-05 12:58:30">2022-09-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/android/">android</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用frida hook解释器Interpreter"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>学习的记录</p>
+<p>准备hook一下Interpreter解释器的所有执行函数。先看下art/runtime/interpreter/interpreter.cc这个主要文件</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> InterpreterImplKind &#123;</span><br><span class="line">  kSwitchImplKind,        <span class="comment">// Switch-based interpreter implementation.</span></span><br><span class="line">  kMterpImplKind          <span class="comment">// Assembly interpreter</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">constexpr</span> InterpreterImplKind kInterpreterImplKind = kMterpImplKind;</span><br></pre></td></tr></table></figure>
+
+<p>然后在中间看到了这个枚举，就是说我当前这个8.1的有两种解释器，一个是switch的，另一个是Assembly汇编的，然后看到当前选择的是汇编解释器，继续看下面如果是汇编解释器就怎么处理，代码太长，只截取中间关键的部分了。</p>
+<a id="more"></a>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (kInterpreterImplKind == kMterpImplKind) &#123;</span><br><span class="line">      <span class="keyword">if</span> (transaction_active) &#123;</span><br><span class="line">        <span class="comment">// No Mterp variant - just use the switch interpreter.</span></span><br><span class="line">        <span class="keyword">return</span> ExecuteSwitchImpl&lt;<span class="literal">false</span>, <span class="literal">true</span>&gt;(self, code_item, shadow_frame, result_register,</span><br><span class="line">                                              <span class="literal">false</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (UNLIKELY(!Runtime::Current()-&gt;IsStarted())) &#123;</span><br><span class="line">        <span class="keyword">return</span> ExecuteSwitchImpl&lt;<span class="literal">false</span>, <span class="literal">false</span>&gt;(self, code_item, shadow_frame, result_register,</span><br><span class="line">                                               <span class="literal">false</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">          <span class="comment">// Mterp does not support all instrumentation/debugging.</span></span><br><span class="line">          <span class="keyword">if</span> (MterpShouldSwitchInterpreters() != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> ExecuteSwitchImpl&lt;<span class="literal">false</span>, <span class="literal">false</span>&gt;(self, code_item, shadow_frame, result_register,</span><br><span class="line">                                                   <span class="literal">false</span>);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">bool</span> returned = ExecuteMterpImpl(self, code_item, &amp;shadow_frame, &amp;result_register);</span><br><span class="line">          <span class="keyword">if</span> (returned) &#123;</span><br><span class="line">            <span class="keyword">return</span> result_register;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// Mterp didn&#x27;t like that instruction.  Single-step it with the reference interpreter.</span></span><br><span class="line">            result_register = ExecuteSwitchImpl&lt;<span class="literal">false</span>, <span class="literal">false</span>&gt;(self, code_item, shadow_frame,</span><br><span class="line">                                                              result_register, <span class="literal">true</span>);</span><br><span class="line">            <span class="keyword">if</span> (shadow_frame.GetDexPC() == DexFile::kDexNoIndex) &#123;</span><br><span class="line">              <span class="comment">// Single-stepped a return or an exception not handled locally.  Return to caller.</span></span><br><span class="line">              <span class="keyword">return</span> result_register;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，有些情况会执行ExecuteSwitchImpl来处理，一般都是使用ExecuteMterpImpl进行处理。然后我们看看这两个函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">JValue <span class="title">ExecuteSwitchImpl</span><span class="params">(Thread* self, <span class="keyword">const</span> DexFile::CodeItem* code_item,</span></span></span><br><span class="line"><span class="function"><span class="params">                         ShadowFrame&amp; shadow_frame, JValue result_register,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">bool</span> interpret_one_instruction)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这里看到第三个参数是ShadowFrame，这个对象里面有artmethod，我们可以从这里取到artmethod后再用老办法获取函数名称。先看看ShadowFrame的字段部分</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ShadowFrame* link_;</span><br><span class="line">ArtMethod* method_;</span><br><span class="line">JValue* result_register_;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">uint16_t</span>* dex_pc_ptr_;</span><br><span class="line"><span class="keyword">const</span> DexFile::CodeItem* code_item_;</span><br><span class="line">LockCountData lock_count_data_;  <span class="comment">// This may contain GC roots when lock counting is active.</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">uint32_t</span> number_of_vregs_;</span><br><span class="line"><span class="keyword">uint32_t</span> dex_pc_;</span><br><span class="line"><span class="keyword">int16_t</span> cached_hotness_countdown_;</span><br><span class="line"><span class="keyword">int16_t</span> hotness_countdown_;</span><br></pre></td></tr></table></figure>
+
+<p>ShadowFrame这个类没有虚函数，第二个字段就是artmethod。然后我们就知道了这个对象偏移一个指针大小就可以去到想要的artmethod了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> artmethod=ptr(shadow).add(Process.pointerSize).readPointer();</span><br></pre></td></tr></table></figure>
+
+<p>然后再看看另一个函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> <span class="function"><span class="keyword">bool</span> <span class="title">ExecuteMterpImpl</span><span class="params">(Thread* self,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 <span class="keyword">const</span> DexFile::CodeItem* code_item,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 ShadowFrame* shadow_frame,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 JValue* result_register)</span> <span class="title">REQUIRES_SHARED</span><span class="params">(Locks::mutator_lock_)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>也是一样的，都是取第三个参数。不过这里有一点不同的区别是。这个函数是汇编实现的。我们再看下汇编的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">ExecuteMterpImpl:</span><br><span class="line">    .cfi_startproc</span><br><span class="line">    SAVE_TWO_REGS_INCREASE_FRAME xPROFILE, x27, 80</span><br><span class="line">    SAVE_TWO_REGS                xIBASE, xREFS, 16</span><br><span class="line">    SAVE_TWO_REGS                xSELF, xINST, 32</span><br><span class="line">    SAVE_TWO_REGS                xPC, xFP, 48</span><br><span class="line">    SAVE_TWO_REGS                fp, lr, 64</span><br><span class="line">    add     fp, sp, #64</span><br><span class="line"></span><br><span class="line">    &#x2F;* Remember the return register *&#x2F;</span><br><span class="line">    str     x3, [x2, #SHADOWFRAME_RESULT_REGISTER_OFFSET]</span><br><span class="line"></span><br><span class="line">    &#x2F;* Remember the code_item *&#x2F;</span><br><span class="line">    str     x1, [x2, #SHADOWFRAME_CODE_ITEM_OFFSET]</span><br><span class="line"></span><br><span class="line">    &#x2F;* set up &quot;named&quot; registers *&#x2F;</span><br><span class="line">    mov     xSELF, x0</span><br><span class="line">    ldr     w0, [x2, #SHADOWFRAME_NUMBER_OF_VREGS_OFFSET]</span><br><span class="line">    add     xFP, x2, #SHADOWFRAME_VREGS_OFFSET     &#x2F;&#x2F; point to vregs.</span><br><span class="line">    add     xREFS, xFP, w0, lsl #2                 &#x2F;&#x2F; point to reference array in shadow frame</span><br><span class="line">    ldr     w0, [x2, #SHADOWFRAME_DEX_PC_OFFSET]   &#x2F;&#x2F; Get starting dex_pc.</span><br><span class="line">    add     xPC, x1, #CODEITEM_INSNS_OFFSET        &#x2F;&#x2F; Point to base of insns[]</span><br><span class="line">    add     xPC, xPC, w0, lsl #1                   &#x2F;&#x2F; Create direct pointer to 1st dex opcode</span><br><span class="line">    EXPORT_PC</span><br><span class="line"></span><br><span class="line">    &#x2F;* Starting ibase *&#x2F;</span><br><span class="line">    ldr     xIBASE, [xSELF, #THREAD_CURRENT_IBASE_OFFSET]</span><br><span class="line"></span><br><span class="line">    &#x2F;* Set up for backwards branches &amp; osr profiling *&#x2F;</span><br><span class="line">    ldr     x0, [xFP, #OFF_FP_METHOD]</span><br><span class="line">    add     x1, xFP, #OFF_FP_SHADOWFRAME</span><br><span class="line">    bl      MterpSetUpHotnessCountdown</span><br><span class="line">    mov     wPROFILE, w0                &#x2F;&#x2F; Starting hotness countdown to xPROFILE</span><br><span class="line"></span><br><span class="line">    &#x2F;* start executing the instruction at rPC *&#x2F;</span><br><span class="line">    FETCH_INST                          &#x2F;&#x2F; load wINST from rPC</span><br><span class="line">    GET_INST_OPCODE ip                  &#x2F;&#x2F; extract opcode from wINST</span><br><span class="line">    GOTO_OPCODE ip                      &#x2F;&#x2F; jump to next instruction</span><br><span class="line">    &#x2F;* NOTE: no fallthrough *&#x2F;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    .global artMterpAsmInstructionStart</span><br><span class="line">    .type   artMterpAsmInstructionStart, %function</span><br><span class="line">artMterpAsmInstructionStart &#x3D; .L_op_nop</span><br><span class="line">    .text</span><br></pre></td></tr></table></figure>
+
+<p>这样就导致了我们在ida中看到的结果和hook的方式有一些区别。</p>
+<p>这里列出我测试的一些区别。</p>
+<p><img src="/2020/09/03/Hook-Interpreter/image-20200903225802440.png" alt="image-20200903225911990"></p>
+<p><img src="/2020/09/03/Hook-Interpreter/image-20200903225956560.png" alt="image-20200903225956560"></p>
+<p>可以看出来ExecuteSwitchImpl这个在export中，而ExecuteMterpImpl这个只在symbol中有。</p>
+<p>继续看另外一个区别，下面是ida解析的ExecuteSwitchImpl</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __fastcall art::interpreter::ExecuteSwitchImpl&lt;<span class="literal">true</span>,<span class="literal">true</span>&gt;(<span class="keyword">int</span> a1, art::interpreter *<span class="keyword">this</span>, __int64 a3, __int64 a4, <span class="keyword">int</span> a5)</span><br></pre></td></tr></table></figure>
+
+<p>另外就是ida解析的ExecuteMterpImpl</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __fastcall <span class="title">ExecuteMterpImpl</span><span class="params">(<span class="keyword">int</span> a1, <span class="keyword">int</span> a2, _DWORD *a3, <span class="keyword">int</span> a4)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>可以看出来，前者多了一个参数。看来汇编的函数里面少了最前面的this。那么当我们hook的时候就要注意了，ExecuteSwitchImpl获取shadow_frame需要取args[3]也就是第4个参数，而ExecuteMterpImpl则需要取args[2]也就是第三个参数</p>
+<p>接着就是开始frida的代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">callPrettyMethod</span>(<span class="params">artmethod</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> prettyMethodPtr=Module.getExportByName(<span class="string">&quot;libart.so&quot;</span>,<span class="string">&quot;_ZN3art9ArtMethod12PrettyMethodEb&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> result=Memory.alloc(<span class="number">0x100</span>);</span><br><span class="line">    <span class="keyword">var</span> prettyMethod=<span class="keyword">new</span> NativeFunction(prettyMethodPtr,<span class="string">&#x27;pointer&#x27;</span>,[<span class="string">&#x27;pointer&#x27;</span>,<span class="string">&#x27;pointer&#x27;</span>,<span class="string">&#x27;bool&#x27;</span>]);</span><br><span class="line">    prettyMethod(ptr(result),ptr(artmethod),<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">var</span> methodName=result.add(<span class="number">0x8</span>).readPointer().readCString()</span><br><span class="line">    <span class="keyword">return</span> methodName;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_interpreter</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="built_in">module</span>=Process.getModuleByName(<span class="string">&quot;libart.so&quot;</span>);</span><br><span class="line">    <span class="built_in">module</span>.enumerateSymbols().forEach(<span class="function"><span class="keyword">function</span>(<span class="params">symbol</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(symbol.name.indexOf(<span class="string">&quot;ExecuteSwitchImpl&quot;</span>)!=<span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(symbol.name,symbol.address);</span><br><span class="line">            Interceptor.attach(symbol.address,&#123;</span><br><span class="line">                onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">                    <span class="keyword">var</span> shadow=args[<span class="number">3</span>];</span><br><span class="line">                    <span class="keyword">var</span> artmethod=ptr(shadow).add(Process.pointerSize).readPointer();</span><br><span class="line">                    <span class="keyword">var</span> methodName= callPrettyMethod(artmethod);</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">&quot;ExecuteSwitchImpl methodName:&quot;</span>,methodName);</span><br><span class="line">                &#125;,</span><br><span class="line">                onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(symbol.name.indexOf(<span class="string">&quot;ExecuteMterpImpl&quot;</span>)!=<span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(symbol.name,symbol.address);</span><br><span class="line">            Interceptor.attach(symbol.address,&#123;</span><br><span class="line">                onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">                    <span class="keyword">var</span> shadow=args[<span class="number">2</span>];</span><br><span class="line">                    <span class="keyword">var</span> artmethod=ptr(shadow).add(Process.pointerSize).readPointer();</span><br><span class="line">                    <span class="keyword">var</span> methodName= callPrettyMethod(artmethod);</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">&quot;ExecuteMterpImpl methodName:&quot;</span>,methodName);</span><br><span class="line">                &#125;,</span><br><span class="line">                onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    hook_interpreter();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setImmediate(main)</span><br></pre></td></tr></table></figure>
+
+<p>最后就开始测试</p>
+<p><code>frida -U --no-pause -f com.example.classloadertest -l hookInterpreter.js</code></p>
+<p>执行结果太长了。我就随便放一段了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ExecuteMterpImpl methodName: void com.android.internal.os.LoggingPrintStream.println(java.lang.Object)</span><br><span class="line">ExecuteMterpImpl methodName: java.lang.String java.lang.String.toString()</span><br><span class="line">ExecuteMterpImpl methodName: void com.android.internal.os.LoggingPrintStream.flush(boolean)</span><br><span class="line">ExecuteMterpImpl methodName: int java.lang.StringBuilder.length()</span><br><span class="line">ExecuteMterpImpl methodName: int java.lang.AbstractStringBuilder.length()</span><br><span class="line">ExecuteMterpImpl methodName: int java.lang.StringBuilder.indexOf(java.lang.String, int)</span><br><span class="line">ExecuteMterpImpl methodName: java.lang.String java.lang.StringBuilder.substring(int)</span><br><span class="line">ExecuteMterpImpl methodName: java.lang.String java.lang.AbstractStringBuilder.substring(int)</span><br><span class="line">ExecuteMterpImpl methodName: java.lang.String java.lang.StringBuilder.substring(int, int)</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">king</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://missking.cc/2020/09/03/Hook-Interpreter/">http://missking.cc/2020/09/03/Hook-Interpreter/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://missking.cc" target="_blank">king的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80-frida/">基础,frida</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/09/10/llvm1/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">llvm简单的使用</div></div></a></div><div class="next-post pull-right"><a href="/2020/09/02/Frida-Native-Register/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用frida来hook artmethod的RegisterNative</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/09/02/Frida-Native-Register/" title="使用frida来hook artmethod的RegisterNative"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-02</div><div class="title">使用frida来hook artmethod的RegisterNative</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/assets/blogImg/litten.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">king</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dqzg12300"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dqzg12300" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:king910827@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">新时代农民工</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/05/kernel1-0/" title="aosp12内核编译开启硬件断点和kprobes记录">aosp12内核编译开启硬件断点和kprobes记录</a><time datetime="2022-09-05T13:01:17.000Z" title="发表于 2022-09-05 13:01:17">2022-09-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/04/11/Kernel1/" title="linux内核书籍阅读笔记1">linux内核书籍阅读笔记1</a><time datetime="2022-04-11T22:38:34.000Z" title="发表于 2022-04-11 22:38:34">2022-04-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/03/20/CPU%E5%9F%BA%E7%A1%80/" title="逆向工程权威指南的看书笔记">逆向工程权威指南的看书笔记</a><time datetime="2022-03-20T15:38:13.000Z" title="发表于 2022-03-20 15:38:13">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/27/MikRom/" title="FartExt超进化之奇奇怪怪的新ROM工具MikRom">FartExt超进化之奇奇怪怪的新ROM工具MikRom</a><time datetime="2022-01-27T13:48:38.000Z" title="发表于 2022-01-27 13:48:38">2022-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/26/fartext/" title="FartExt之优化更深主动调用的FART10">FartExt之优化更深主动调用的FART10</a><time datetime="2021-07-26T21:31:05.000Z" title="发表于 2021-07-26 21:31:05">2021-07-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By king</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'ihIPa0lRcHcfVzXqcboVznyu-gzGzoHsz',
+      appKey: 'YB8y22BOhfzrVioINMUoEqxd',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://missking.cc/2020/09/03/Hook-Interpreter/'
+    this.page.identifier = '2020/09/03/Hook-Interpreter/'
+    this.page.title = '使用frida hook解释器Interpreter'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !true) {
+  if (true) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
